@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">AwesomeChat</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="icon_splash">icon_splash</string>
+    <string name="Awesome_chat">Awesomechat</string>
+    <string name="experience">Trải nghiệm Awesome chat</string>
+    <string name="icon_login">icon_login</string>
+    <string name="sign_in">Đăng nhập</string>
+    <string name="email">EMAIL</string>
+    <string name="password">MẬT KHẨU</string>
+    <string name="forgot_password">Quên mật khẩu ?</string>
+    <string name="SignIn">Đăng nhập</string>
+    <string name="noAccount">Chưa có tài khoản?</string>
+    <string name="signupNow">Đăng ký ngay</string>
+    <string name="signUp">Đăng ký</string>
+    <string name="haveAccount">Đã có tài khoản</string>
+    <string name="signinNow">Đăng nhập ngay</string>
+    <string name="name">HỌ VÀ TÊN</string>
+    <string name="back">back</string>
+    <string name="agree">Tôi đồng ý với các chính sách và điều khoản</string>
+    <string name="error_user_null">Tên người dùng không được để trông</string>
+    <string name="error_user_number">Tên người dùng không được chứa chữ số</string>
+    <string name="error_password_isValid">Password không hợp lệ</string>
+    <string name="error_email_isValid">Địa chỉ Email không hợp lệ</string>
+    <string name="chat">Tin nhắn</string>
+    <string name="personal_page">Trang cá nhân</string>
+    <string name="friend">Bạn bè</string>
+    <string name="image_personal">Image Personal</string>
+    <string name="edit">button edit</string>
+    <string name="ex_email">awesomechat@gmail.com</string>
+    <string name="select_language">select language</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="vietnamese">Tiếng việt</string>
+    <string name="notification">Thông báo</string>
+    <string name="image_notification">Image Notification</string>
+    <string name="button_notification">Image notification</string>
+    <string name="version">version</string>
+    <string name="detail_version">Phiên bản ứng dụng</string>
+    <string name="version_number">1.0.0</string>
+    <string name="logout">Đăng xuất</string>
+</resources>
