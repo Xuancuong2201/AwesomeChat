@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.FragmentDetailsMessage">
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.example.awesomechat.viewmodel.DetailsMessageViewModel" />
+        <import type="android.view.View"/>
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_details_item">
+        <ImageView
+            android:id="@+id/btn_Back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="30dp"
+            android:contentDescription="@string/bt_back"
+            android:src="@drawable/icon_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/img_personalMini"
+            imageUrlPerson="@{viewmodel.imageUrl}"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/bt_back"
+            app:layout_constraintStart_toEndOf="@+id/btn_Back"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/lato_black"
+            android:text="@{viewmodel.name}"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@+id/img_personalMini"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_block"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img_personalMini">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_personal"
+                imageUrlPerson="@{viewmodel.imageUrl}"
+                android:layout_width="@dimen/size_image_message"
+                android:layout_height="@dimen/size_image_message"
+                android:visibility="gone"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/primary_color"
+                android:layout_marginTop="100dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/status_message"
+                android:textSize="@dimen/text_size14sp"
+                android:fontFamily="@font/lato_regular"
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/img_personal" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcv_DetailsMessage"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background_details_item"
+                app:layout_constraintBottom_toTopOf="@+id/frame_gallery"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <ImageView
+                    android:id="@+id/bt_gallery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:contentDescription="@string/icon_gallery"
+                    android:src="@{viewmodel.stateButton ? @drawable/icon_gallery_select:@drawable/icon_gallery}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/tv_Message"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/background_chat_recipient"
+                    android:drawableEnd="@drawable/icon_smile"
+                    android:drawablePadding="10dp"
+                    android:hint="@string/input_message"
+                    android:text="@={viewmodel.content}"
+                    android:inputType="text"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="12dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/btn_Send"
+                    app:layout_constraintStart_toEndOf="@id/bt_gallery"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <ImageView
+                    android:id="@+id/btn_Send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/send_message"
+                    android:padding="12dp"
+                    android:visibility="gone"
+                    android:src="@drawable/icon_send_message"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/tv_Message"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/frame_gallery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/bt_sent_image"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sent"
+                    android:background="#4356B4"
+                    android:textColor="@color/white"
+                    android:visibility="gone"
+                    android:layout_marginBottom="20dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rcv_gallery"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:visibility="@{viewmodel.stateButton ? View.VISIBLE:View.GONE}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

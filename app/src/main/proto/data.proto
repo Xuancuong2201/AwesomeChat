@@ -1,0 +1,14 @@
+syntax = "proto3";
+option java_package = "com.example.awesomechat";
+option java_multiple_files = true;
+
+message UserPreferences{
+  string url = 1;
+  string name = 2;
+  string email=3;
+  string birthday = 4;
+  string numberphone = 5;
+
+
+
+}

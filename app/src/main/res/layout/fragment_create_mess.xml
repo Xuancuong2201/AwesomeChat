@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.FragmentCreateMess">
+<data>
+    <variable
+        name="user"
+        type="com.example.awesomechat.model.User" />
+</data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_root">
+        <TextView
+            android:id="@+id/tv_CreateMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_message"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size22sp"
+            android:fontFamily="@font/lato_black"
+            android:layout_marginTop="@dimen/margin_15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_10dp"
+            android:src="@drawable/icon_back_white"
+            android:contentDescription="@string/bt_back"
+            android:layout_marginStart="@dimen/margin_7dp"
+            android:layout_marginTop="@dimen/margin_7dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <SearchView
+            android:id="@+id/search_Friend"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_edittext"
+            android:iconifiedByDefault="false"
+            android:inputType="text"
+            android:queryHint="@string/search_friend"
+            android:background="@drawable/custom_search"
+            android:layout_marginStart="@dimen/margin_12dp"
+            android:layout_marginTop="@dimen/margin_22dp"
+            android:layout_marginEnd="@dimen/margin_12dp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_CreateMessage" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/margin_22dp"
+            android:background="@drawable/background_block"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_Friend">
+
+            <TextView
+                android:id="@+id/tv_ListFriend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/friend_list"
+                android:textColor="@color/no_focus"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size17sp"
+                android:layout_marginStart="@dimen/margin_12dp"
+                android:layout_marginTop="@dimen/margin_25dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcv_createMessage"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/margin_7dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_ListFriend" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/frame_friend"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_bottom_create"
+                android:visibility="gone"
+                android:background="@color/background"
+                app:layout_constraintBottom_toBottomOf="@+id/rcv_createMessage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <FrameLayout
+                    android:id="@+id/fr_friend_selected"
+                    android:layout_width="@dimen/size_button_circle"
+                    android:layout_height="@dimen/size_button_circle"
+                    android:layout_marginStart="@dimen/margin_12dp"
+                    android:layout_marginTop="@dimen/margin_10dp"
+                    android:layout_marginBottom="@dimen/margin_10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/img_personal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        imageUrlPerson="@{user.url}"
+                        android:contentDescription="@string/image_personal" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/btn_delete"
+                        android:layout_width="@dimen/size_icon_close"
+                        android:layout_height="@dimen/size_icon_close"
+                        android:layout_marginTop="-4dp"
+                        android:layout_marginEnd="-4dp"
+                        android:layout_gravity="top|end"
+                        android:contentDescription="@string/notification_badge"
+                        android:src="@drawable/icon_close" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/btn_createMessage"
+                    android:layout_width="@dimen/size_button_circle"
+                    android:layout_height="@dimen/size_button_circle"
+                    android:background="@drawable/custom_circle_button"
+                    android:layout_marginEnd="@dimen/margin_12dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/icon_continue" />
+                </FrameLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

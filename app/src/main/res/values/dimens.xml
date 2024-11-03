@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_size30sp">30sp</dimen>
+    //fragment_login
+    <dimen name="margin_fragment">24dp</dimen>
+    <dimen name="marginTop_icon_login">81dp</dimen>
+    <dimen name="margin_3dp">3dp</dimen>
+    <dimen name="margin_11dp">11dp</dimen>
+    <dimen name="margin_61dp">61dp</dimen>
+    <dimen name="margin_7dp">7dp</dimen>
+    <dimen name="margin_15dp">15dp</dimen>
+    <dimen name="margin_40dp">40dp</dimen>
+    <dimen name="margin_47dp">47dp</dimen>
+    <dimen name="height_edittext">48dp</dimen>
+    <dimen name="height_button">52dp</dimen>
+    <dimen name="margin_38dp">38dp</dimen>
+    <dimen name="text_size15sp">15sp</dimen>
+
+    //fragment_signup
+    <dimen name="margin_64dp">64dp</dimen>
+    <dimen name="margin_19dp">19dp</dimen>
+    <dimen name="margin_25dp">25dp</dimen>
+    <dimen name="margin_48dp">48dp</dimen>
+    <dimen name="margin_30dp">30dp</dimen>
+
+    //fragment_home
+    <dimen name="margin_12dp">12dp</dimen>
+    <dimen name="margin_13dp">13dp</dimen>
+    <dimen name="margin_16dp">16dp</dimen>
+    <dimen name="corner_radius">25dp</dimen>
+    <dimen name="height_navigation">100dp</dimen>
+    //fragment_message
+    <dimen name="margin_10dp">10dp</dimen>
+    <dimen name="height_icon">35dp</dimen>
+    <dimen name="width_icon">35dp</dimen>
+    <dimen name="margin_22dp">22dp</dimen>
+
+    //fragment_friend
+    <dimen name="text_size17sp">17sp</dimen>
+    <dimen name="text_size22sp">22sp</dimen>
+
+    <dimen name="height_bottom_create">77dp</dimen>
+    <dimen name="size_button_circle">58dp</dimen>
+    <dimen name="size_icon">24dp</dimen>
+    <dimen name="size_icon_close">22dp</dimen>
+    <dimen name="text_size19sp">19sp</dimen>
+    <dimen name="margin_44dp">44dp</dimen>
+    <dimen name="margin_32dp">32dp</dimen>
+    <dimen name="size_image_edit">145dp</dimen>
+    <dimen name="size_icon_camera">40dp</dimen>
+    <dimen name="margin_34dp">34dp</dimen>
+    <dimen name="text_size14sp">14sp</dimen>
+
+    <dimen name="height_image_background">500dp</dimen>
+    <dimen name="size_image_personal">65dp</dimen>
+    <dimen name="text_size16sp">16sp</dimen>
+    <dimen name="margin_42dp">42dp</dimen>
+    <dimen name="margin_26dp">26dp</dimen>
+    <dimen name="margin_54dp">54dp</dimen>
+    <dimen name="margin_18dp">18dp</dimen>
+    <dimen name="text_size18sp">18sp</dimen>
+    <dimen name="margin_21dp">21dp</dimen>
+    <dimen name="margin_24dp">24dp</dimen>
+    <dimen name="margin_1dp">1dp</dimen>
+    <dimen name="height_button_agree">30dp</dimen>
+    <dimen name="size_image_friend">35dp</dimen>
+    <dimen name="height_button_delete">40dp</dimen>
+    <dimen name="width_button_delete">85dp</dimen>
+    <dimen name="height_multi_image">80dp</dimen>
+    <dimen name="height__image_gallery">120dp</dimen>
+    <dimen name="size_image_detail_message">40dp</dimen>
+    <dimen name="size_image_sent">150dp</dimen>
+    <dimen name="margin_60dp">60dp</dimen>
+    <dimen name="height_image_select_recipient">45dp</dimen>
+    <dimen name="margin_5dp">5dp</dimen>
+    <dimen name="margin_2dp">2dp</dimen>
+    <dimen name="width_button_dialog">50dp</dimen>
+    <dimen name="height_button_dialog">30dp</dimen>
+    <dimen name="width_dialog_language">250dp</dimen>
+    <dimen name="height_dialog_language">150dp</dimen>
+    <dimen name="size_image_message">120dp</dimen>
+    <dimen name="text_size12sp">12sp</dimen>
+    <dimen name="margin_100dp">100dp</dimen>
+</resources>

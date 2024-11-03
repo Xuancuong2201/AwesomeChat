@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.FragmentEdit_Infor_User">
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.example.awesomechat.viewmodel.EditViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_root">
+        <TextView
+            android:id="@+id/tv_edit_information"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_information"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size22sp"
+            android:fontFamily="@font/lato_black"
+            android:layout_marginTop="@dimen/margin_32dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:src="@drawable/icon_back_white"
+            android:contentDescription="@string/bt_back"
+            android:layout_marginStart="@dimen/margin_7dp"
+            android:layout_marginTop="@dimen/margin_22dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/btn_Save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="@string/save"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size19sp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="@dimen/margin_34dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/margin_32dp"
+            android:background="@drawable/background_block"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_edit_information">
+
+            <FrameLayout
+                android:id="@+id/fr_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/img_personalMini"
+                    imageUrlPerson="@{viewmodel.url}"
+                    android:layout_width="@dimen/size_image_edit"
+                    android:layout_height="@dimen/size_image_edit"
+                    android:contentDescription="@string/image_personal" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/bt_selectImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="-10dp"
+                    android:layout_marginBottom="-15dp"
+                    android:contentDescription="@string/button_camera"
+                    android:src="@drawable/icon_camera" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name"
+                android:textSize="@dimen/text_size14sp"
+                android:textColor="@color/color_gray"
+                android:layout_marginStart="@dimen/margin_25dp"
+                android:layout_marginEnd="@dimen/margin_25dp"
+                android:layout_marginTop="@dimen/margin_44dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fr_image" />
+
+            <EditText
+                android:id="@+id/edt_Name"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_edittext"
+                android:text="@={viewmodel.name}"
+                android:autofillHints="name"
+                android:inputType="text"
+                android:drawableEnd="@drawable/icon_user"
+                android:layout_marginTop="@dimen/margin_7dp"
+                android:layout_marginStart="@dimen/margin_25dp"
+                android:layout_marginEnd="@dimen/margin_25dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_Name" />
+
+            <TextView
+                android:id="@+id/tv_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/number_phone"
+                android:textColor="@color/color_gray"
+                android:textSize="@dimen/text_size14sp"
+                android:layout_marginTop="@dimen/margin_32dp"
+                app:layout_constraintStart_toStartOf="@id/tv_Name"
+                app:layout_constraintTop_toBottomOf="@+id/edt_Name" />
+
+            <EditText
+                android:id="@+id/edt_Phone"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_edittext"
+                android:text="@={viewmodel.numberPhone}"
+                android:autofillHints="phone"
+                android:inputType="phone"
+                android:drawableEnd="@drawable/icon_phone"
+                android:layout_marginTop="@dimen/margin_7dp"
+                android:layout_marginStart="@dimen/margin_25dp"
+                android:layout_marginEnd="@dimen/margin_25dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_phone" />
+
+            <TextView
+                android:id="@+id/birthday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/birthday"
+                android:textColor="@color/color_gray"
+                android:textSize="@dimen/text_size14sp"
+                android:layout_marginTop="@dimen/margin_32dp"
+                app:layout_constraintStart_toStartOf="@+id/tv_phone"
+                app:layout_constraintTop_toBottomOf="@+id/edt_Phone" />
+
+            <EditText
+                android:id="@+id/edt_Birthday"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_edittext"
+                android:text="@={viewmodel.birthDay}"
+                android:hint="@string/dd_mm_yyyy"
+                android:autofillHints="null"
+                android:inputType="date"
+                android:drawableEnd="@drawable/icon_birthday"
+                android:layout_marginTop="@dimen/margin_7dp"
+                android:layout_marginStart="@dimen/margin_25dp"
+                android:layout_marginEnd="@dimen/margin_25dp"
+                app:layout_constraintTop_toBottomOf="@+id/birthday" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

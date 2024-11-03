@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.example.awesomechat.viewmodel.DetailsMessageViewModel" />
+        <variable
+            name="message"
+            type="com.example.awesomechat.model.DetailMessage" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp">
+        <ImageView
+            android:id="@+id/img_recipient"
+            android:layout_width="@dimen/size_image_detail_message"
+            android:layout_height="@dimen/size_image_detail_message"
+            imageUrlPerson="@{viewmodel.imageUrl}"
+            android:layout_marginStart="@dimen/margin_12dp"
+            android:contentDescription="@string/image_personal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/image_sent"
+            android:layout_width="@dimen/size_image_sent"
+            android:layout_height="@dimen/size_image_sent"
+            app:imageUrlBackground="@{message.content}"
+            checkImage="@{message.type}"
+            android:contentDescription="@string/image_gallery"
+            android:layout_marginStart="@dimen/margin_12dp"
+            app:layout_constraintStart_toEndOf="@+id/img_recipient"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_Message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{message.content}"
+            android:textSize="@dimen/text_size16sp"
+            android:textStyle="bold"
+            checkMess="@{message.type}"
+            android:padding="@dimen/margin_16dp"
+            android:background="@drawable/background_chat_recipient"
+            android:layout_marginStart="@dimen/margin_10dp"
+            app:layout_constraintStart_toEndOf="@+id/img_recipient"
+            app:layout_constraintTop_toBottomOf="@+id/image_sent" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            showDate="@{message.time}"
+            android:textColor="@color/no_focus"
+            android:layout_marginStart="@dimen/margin_3dp"
+            android:layout_marginTop="@dimen/margin_1dp"
+            app:layout_constraintStart_toStartOf="@+id/tv_Message"
+            app:layout_constraintTop_toBottomOf="@+id/tv_Message" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
