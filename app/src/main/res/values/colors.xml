@@ -3,6 +3,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="primary_color">#4356B4</color>
+    <color name="color_gray">#999999</color>
+    <color name="distance">#CACACA</color>
     <color name="no_focus">#CACACA</color>
     <color name="background">#F6F6F6</color>
+    <color name="color_delete">#FF0000</color>
+    <color name="background_chat_item">#e0e0e0</color>
+    <color name="background_details_item">#DFF9FF</color>
 </resources>

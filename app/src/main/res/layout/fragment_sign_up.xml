@@ -2,187 +2,161 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".view.SignUpFragment">
+    tools:context=".view.FragmentSignUp">
     <data>
         <variable
             name="viewmodel"
             type="com.example.awesomechat.viewmodel.SignUpViewModel" />
     </data>
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ImageView
-            android:id="@+id/btn_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/icon_back"
-            android:contentDescription="@string/back"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toTopOf="@+id/guideline3" />
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:fontFamily="@font/lato_black"
-            android:text="@string/signUp"
-            android:textColor="@color/primary_color"
-            android:textSize="30sp"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/btn_back" />
-
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/name"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toTopOf="@+id/guideline4" />
-
-        <EditText
-            android:id="@+id/edt_Name"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:autofillHints="null"
-            android:drawableEnd="@drawable/icon_user"
-            android:ems="10"
-            android:text="@={viewmodel.account}"
-            android:inputType="text"
-            android:labelFor="@id/email"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/name"
-            tools:ignore="LabelFor" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.06" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.08" />
-
-        <TextView
-            android:id="@+id/email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:layout_marginTop="25dp"
-            android:text="@string/email"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/edt_Name" />
-
-        <EditText
-            android:id="@+id/edt_Email"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:autofillHints="null"
-            android:drawableEnd="@drawable/icon_email"
-            android:ems="10"
-            android:text="@={viewmodel.email}"
-            android:inputType="textEmailAddress"
-            android:labelFor="@id/email"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/email"
-            tools:ignore="LabelFor" />
-
-        <TextView
-            android:id="@+id/password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="@string/password"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/edt_Email" />
-
-        <EditText
-            android:id="@+id/edt_Password"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:autofillHints="null"
-            android:drawableEnd="@drawable/icon_password"
-            android:text="@={viewmodel.password}"
-            android:ems="10"
-            android:inputType="textPassword"
-            android:labelFor="@id/password"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/password"
-            tools:ignore="LabelFor" />
-        <CheckBox
-            android:id="@+id/rdb_agree"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="@string/agree"
-            android:textColor="@color/primary_color"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/edt_Password" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_Register"
-            android:layout_width="0dp"
-            android:layout_height="52dp"
-            android:layout_marginTop="35dp"
-            android:background="@color/no_focus"
-            android:text="@string/signUp"
-            android:onClick="@{() ->viewmodel.register()}"
-            android:textColor="@color/white"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/rdb_agree" />
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.28" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.90" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintStart_toStartOf="@+id/guideline2">
-
-            <TextView
+            <ImageView
+                android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/haveAccount"
-                android:textColor="#999999"
-                android:textSize="15sp" />
+                android:src="@drawable/icon_back"
+                android:contentDescription="@string/bt_back"
+                android:layout_marginTop="@dimen/margin_64dp"
+                android:layout_marginStart="@dimen/margin_19dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tv_Login"
+                android:id="@+id/tv_signUp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/margin_48dp"
+                android:layout_marginStart="@dimen/margin_25dp"
                 android:fontFamily="@font/lato_black"
-                android:text="@string/signinNow"
+                android:text="@string/signUp"
                 android:textColor="@color/primary_color"
-                android:textSize="15sp" />
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+                android:textSize="30sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_back" />
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name"
+                android:layout_marginTop="@dimen/margin_61dp"
+                app:layout_constraintStart_toStartOf="@+id/tv_signUp"
+                app:layout_constraintTop_toBottomOf="@+id/tv_signUp" />
+
+            <EditText
+                android:id="@+id/edt_Name"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_edittext"
+                android:text="@={viewmodel.account}"
+                android:hint="@string/input_name_user"
+                android:autofillHints="name"
+                android:inputType="text"
+                android:drawableEnd="@drawable/icon_user"
+                android:layout_marginTop="@dimen/margin_7dp"
+                android:layout_marginStart="@dimen/margin_fragment"
+                android:layout_marginEnd="@dimen/margin_fragment"
+                app:layout_constraintStart_toStartOf="@+id/name"
+                app:layout_constraintTop_toBottomOf="@+id/name" />
+
+            <TextView
+                android:id="@+id/tv_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_40dp"
+                android:text="@string/email"
+                app:layout_constraintStart_toStartOf="@+id/name"
+                app:layout_constraintTop_toBottomOf="@+id/edt_Name" />
+
+            <EditText
+                android:id="@+id/edt_Email"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_edittext"
+                android:text="@={viewmodel.email}"
+                android:hint="@string/input_email"
+                android:inputType="textEmailAddress"
+                android:autofillHints="emailAddress"
+                android:drawableEnd="@drawable/icon_email"
+                android:layout_marginTop="@dimen/margin_7dp"
+                android:layout_marginStart="@dimen/margin_fragment"
+                android:layout_marginEnd="@dimen/margin_fragment"
+                app:layout_constraintTop_toBottomOf="@+id/tv_email"
+                tools:ignore="LabelFor" />
+
+            <TextView
+                android:id="@+id/tv_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_40dp"
+                android:text="@string/password"
+                app:layout_constraintStart_toStartOf="@+id/tv_email"
+                app:layout_constraintTop_toBottomOf="@+id/edt_Email" />
+
+            <EditText
+                android:id="@+id/edt_Password"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_edittext"
+                android:text="@={viewmodel.password}"
+                android:hint="@string/input_password"
+                android:autofillHints="password"
+                android:inputType="textPassword"
+                android:drawableEnd="@drawable/icon_password"
+                android:layout_marginTop="@dimen/margin_7dp"
+                android:layout_marginStart="@dimen/margin_fragment"
+                android:layout_marginEnd="@dimen/margin_fragment"
+                app:layout_constraintStart_toStartOf="@+id/tv_password"
+                app:layout_constraintTop_toBottomOf="@+id/tv_password" />
+
+            <CheckBox
+                android:id="@+id/rdb_agree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_30dp"
+                android:text="@string/agree"
+                android:textColor="@color/primary_color"
+                android:checked="@={viewmodel.isChecked}"
+                android:button="@drawable/custom_checkbox"
+                app:layout_constraintStart_toStartOf="@+id/tv_password"
+                app:layout_constraintTop_toBottomOf="@+id/edt_Password" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_Register"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_button"
+                android:text="@string/signUp"
+                android:background="@{viewmodel.result ? @color/primary_color:@color/no_focus}"
+                android:onClick="@{() ->viewmodel.register()}"
+                android:enabled="@{viewmodel.result}"
+                android:textColor="@color/white"
+                android:layout_marginTop="@dimen/margin_47dp"
+                android:layout_marginStart="@dimen/margin_fragment"
+                android:layout_marginEnd="@dimen/margin_fragment"
+                app:layout_constraintTop_toBottomOf="@+id/rdb_agree" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_38dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/btn_Register"
+                app:layout_constraintStart_toStartOf="@+id/btn_Register">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/haveAccount"
+                    android:textColor="@color/color_gray"
+                    android:textSize="@dimen/text_size15sp" />
+                <TextView
+                    android:id="@+id/tv_Login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_3dp"
+                    android:fontFamily="@font/lato_black"
+                    android:text="@string/signinNow"
+                    android:textColor="@color/primary_color"
+                    android:textSize="@dimen/text_size15sp" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

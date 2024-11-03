@@ -3,19 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_nav"
-    app:startDestination="@id/chatFragment">
-
+    app:startDestination="@id/fragmentMessage">
     <fragment
-        android:id="@+id/chatFragment"
-        android:name="com.example.awesomechat.view.ChatFragment"
+        android:id="@+id/fragmentMessage"
+        android:name="com.example.awesomechat.view.FragmentMessage"
         android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" >
+        tools:layout="@layout/fragment_message" >
         <action
-            android:id="@+id/action_chatFragment_to_fragmentPage"
-            app:destination="@id/fragmentPage" />
-        <action
-            android:id="@+id/action_chatFragment_to_friendFragment"
+            android:id="@+id/action_fragmentMessage_to_friendFragment"
             app:destination="@id/friendFragment" />
+        <action
+            android:id="@+id/action_fragmentMessage_to_fragmentPage"
+            app:destination="@id/fragmentPage" />
     </fragment>
     <fragment
         android:id="@+id/fragmentPage"
@@ -23,19 +22,19 @@
         android:label="fragment_page"
         tools:layout="@layout/fragment_page" >
         <action
-            android:id="@+id/action_fragmentPage_to_friendFragment"
-            app:destination="@id/friendFragment" />
-        <action
-            android:id="@+id/action_fragmentPage_to_chatFragment"
-            app:destination="@id/chatFragment" />
+            android:id="@+id/action_fragmentPage_to_fragmentMessage"
+            app:destination="@id/fragmentMessage" />
     </fragment>
     <fragment
         android:id="@+id/friendFragment"
-        android:name="com.example.awesomechat.view.FriendFragment"
+        android:name="com.example.awesomechat.view.FragmentFriend"
         android:label="fragment_friend"
         tools:layout="@layout/fragment_friend" >
         <action
             android:id="@+id/action_friendFragment_to_fragmentPage"
             app:destination="@id/fragmentPage" />
+        <action
+            android:id="@+id/action_friendFragment_to_fragmentMessage"
+            app:destination="@id/fragmentMessage" />
     </fragment>
 </navigation>

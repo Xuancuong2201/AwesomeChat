@@ -16,12 +16,10 @@ class SplashFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_splash, container, false)
-        GlobalScope.launch(Dispatchers.Main) {
+        CoroutineScope(Dispatchers.Main).launch(Dispatchers.Main) {
             delay(2000)
-            Navigation.findNavController(view).navigate(R.id.go_to_loginFragment)
+            Navigation.findNavController(view).navigate(R.id.splash_go_to_loginFragment)
         }
         return view
     }
-
-
 }

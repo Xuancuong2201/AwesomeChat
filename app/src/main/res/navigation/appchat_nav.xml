@@ -9,34 +9,87 @@
         android:name="com.example.awesomechat.view.SplashFragment"
         android:label="fragment_splash"
         tools:layout="@layout/fragment_splash" >
+
         <action
-            android:id="@+id/go_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            android:id="@+id/splash_go_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"
+            />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.awesomechat.view.LoginFragment"
+        android:name="com.example.awesomechat.view.FragmentLogin"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
-            android:id="@+id/go_to_signUpFragment"
-            app:destination="@id/signUpFragment" />
+            android:id="@+id/go_to_signUpFragmentz"
+            app:destination="@id/signUpFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="false" />
         <action
-            android:id="@+id/action_loginFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            android:id="@+id/go_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.example.awesomechat.view.SignUpFragment"
+        android:name="com.example.awesomechat.view.FragmentSignUp"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" >
+
         <action
-            android:id="@+id/go_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            android:id="@+id/go_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_signUpFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"
+            />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.awesomechat.view.HomeFragment"
+        android:name="com.example.awesomechat.view.FragmentHome"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_fragmentEdit2"
+            app:destination="@id/fragmentEdit" />
+        <action
+            android:id="@+id/action_homeFragment_to_fragmentDetailsMessage"
+            app:destination="@id/fragmentDetailsMessage" />
+        <action
+            android:id="@+id/action_homeFragment_to_fragmentCreateMess"
+            app:destination="@id/fragmentCreateMess" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentEdit"
+        android:name="com.example.awesomechat.view.FragmentEdit_Infor_User"
+        android:label="fragment_edit"
+        tools:layout="@layout/fragment_edit_infor_user" />
+    <fragment
+        android:id="@+id/fragmentDetailsMessage"
+        android:name="com.example.awesomechat.view.FragmentDetailsMessage"
+        android:label="fragment_details_message"
+        tools:layout="@layout/fragment_details_message">
+        <argument
+            android:name="message"
+            app:argType="com.example.awesomechat.model.Messages" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentCreateMess"
+        android:name="com.example.awesomechat.view.FragmentCreateMess"
+        android:label="fragment_create_mess"
+        tools:layout="@layout/fragment_create_mess">
+        <action
+            android:id="@+id/action_fragmentCreateMess_to_fragmentDetailsMessage"
+            app:destination="@id/fragmentDetailsMessage"
+            app:popUpTo="@id/fragmentCreateMess"
+            app:popUpToInclusive="true"/>
+    </fragment>
 </navigation>

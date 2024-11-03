@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.FragmentMessage">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_root">
+        <TextView
+            android:id="@+id/tv_Message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/message"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size30sp"
+            android:fontFamily="@font/lato_black"
+            android:layout_marginStart="@dimen/margin_12dp"
+            android:layout_marginTop="@dimen/margin_10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/btn_createMessage"
+            android:layout_width="@dimen/height_icon"
+            android:layout_height="@dimen/height_icon"
+            android:layout_marginTop="@dimen/margin_10dp"
+            android:layout_marginEnd="@dimen/margin_12dp"
+            android:contentDescription="@string/create_message"
+            android:src="@drawable/icon_new_message"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_Message" />
+
+        <SearchView
+            android:id="@+id/search_Message"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_edittext"
+            android:iconifiedByDefault="false"
+            android:inputType="text"
+            android:queryHint="@string/search_friend"
+            android:layout_marginStart="@dimen/margin_12dp"
+            android:layout_marginTop="@dimen/margin_22dp"
+            android:layout_marginEnd="@dimen/margin_12dp"
+            android:background="@drawable/custom_search"
+            app:layout_constraintTop_toBottomOf="@+id/tv_Message" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcv_Message"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@drawable/background_block"
+                android:layout_marginTop="@dimen/margin_22dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/search_Message" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
