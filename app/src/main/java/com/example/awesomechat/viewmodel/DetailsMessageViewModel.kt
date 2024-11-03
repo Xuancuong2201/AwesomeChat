@@ -7,14 +7,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.awesomechat.interact.InteractMessage
 import com.example.awesomechat.model.DetailMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DetailsMessageViewModel(private val interactMessage: InteractMessage) : ViewModel() {
-    var name = MutableLiveData<String>()
-    var imageUrl = MutableLiveData<String>()
-    var content = MutableLiveData<String>()
-    val listDetailsMessage = MutableLiveData<List<DetailMessage>>()
-    val listImageLiveData = MutableLiveData<List<String>>()
+@HiltViewModel
+class DetailsMessageViewModel @Inject constructor(val interactMessage: InteractMessage) : ViewModel() {
+    val name by lazy { MutableLiveData<String>() }
+    val imageUrl by lazy { MutableLiveData<String>() }
+    val content by lazy { MutableLiveData<String>() }
+    val listDetailsMessage by lazy { MutableLiveData<List<DetailMessage>>() }
+    val listImageLiveData by lazy { MutableLiveData<List<String>>() }
     val stateButton: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
 
     fun getDetailsMessage(recipient: String) {
@@ -30,7 +33,6 @@ class DetailsMessageViewModel(private val interactMessage: InteractMessage) : Vi
     }
 
     suspend fun sentImage(recipient: String) {
-        Log.w("Test Detais ViewModel",listImageLiveData.value!!.size.toString())
         if(listImageLiveData.value!=null){
             if(listImageLiveData.value!!.size==1){
                 viewModelScope.launch {

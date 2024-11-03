@@ -7,12 +7,17 @@ import com.example.awesomechat.interact.InteractMessage
 import com.example.awesomechat.model.Conversation
 import com.example.awesomechat.model.DetailMessage
 import com.example.awesomechat.model.Messages
-import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -20,14 +25,11 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.util.Date
 import java.util.UUID
+import javax.inject.Inject
 
 
-class MessageRepository : InteractMessage {
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val db = Firebase.firestore
-    private val storage = FirebaseStorage.getInstance().getReference("Images")
+class MessageRepository @Inject constructor(private val auth: FirebaseAuth, private val db: FirebaseFirestore,private val storage :StorageReference) : InteractMessage {
     override val emailCurrent: String = auth.currentUser!!.email.toString()
-
     override suspend fun getListMessage(): List<Messages> {
         return withContext(Dispatchers.IO) {
             val messagesList = mutableListOf<Messages>()
@@ -213,4 +215,11 @@ class MessageRepository : InteractMessage {
             }
         }
     }
+}
+
+@Module
+@InstallIn(ViewModelComponent::class)
+abstract class MessageModule{
+    @Binds
+    abstract fun bindInteractMessage(messageRepository: MessageRepository): InteractMessage
 }

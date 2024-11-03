@@ -1,18 +1,16 @@
 package com.example.awesomechat.adapter
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.example.awesomechat.databinding.ItemMessageRecipientSelectBinding
-import com.example.awesomechat.model.Messages
 import com.example.awesomechat.model.User
 import com.example.awesomechat.viewmodel.CreateMessViewModel
 
-class RecipientMessageAdapter(val viewModel: CreateMessViewModel) :
+class RecipientMessageAdapter (val viewModel: CreateMessViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(),Filterable {
     private val itemListRoot = arrayListOf<User>()
     private val itemListInteract = arrayListOf<User>()

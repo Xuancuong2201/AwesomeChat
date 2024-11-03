@@ -3,8 +3,11 @@ package com.example.awesomechat.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class SearchViewModel :ViewModel() {
+@HiltViewModel
+class SearchViewModel @Inject constructor()  :ViewModel() {
     private val _searchQuery = MutableLiveData<String>()
     val searchQuery: LiveData<String> get() = _searchQuery
 

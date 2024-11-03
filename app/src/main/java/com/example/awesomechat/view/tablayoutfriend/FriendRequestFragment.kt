@@ -6,37 +6,30 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.awesomechat.R
 import com.example.awesomechat.adapter.FriendAdapter
 import com.example.awesomechat.databinding.FragmentFriendRequestBinding
 import com.example.awesomechat.interact.Swipe
-import com.example.awesomechat.repository.firebase.FriendRepository
 import com.example.awesomechat.viewmodel.FriendViewModel
 import com.example.awesomechat.viewmodel.SearchViewModel
-import com.example.awesomechat.viewmodel.factory.ViewModelFriendFactory
-import com.example.awesomechat.viewmodel.factory.ViewModelSearchFactory
 
 
 class FriendRequestFragment : Fragment() {
     private var _binding: FragmentFriendRequestBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: FriendViewModel
+    private  val viewModel: FriendViewModel by activityViewModels()
+    private val searchViewModel: SearchViewModel by activityViewModels()
     private lateinit var adapter: FriendAdapter
-    private lateinit var searchViewModel: SearchViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        adapter = FriendAdapter(viewModel)
         _binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_friend_request, container, false)
-        val factory = ViewModelFriendFactory(FriendRepository())
-        val factorySearch = ViewModelSearchFactory.getInstance()
-        viewModel = ViewModelProvider(this, factory)[FriendViewModel::class.java]
-        searchViewModel = ViewModelProvider(this, factorySearch)[SearchViewModel::class.java]
-        adapter = FriendAdapter(viewModel)
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }

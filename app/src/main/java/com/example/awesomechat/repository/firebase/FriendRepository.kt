@@ -3,20 +3,25 @@ package com.example.awesomechat.repository.firebase
 import android.content.ContentValues.TAG
 import android.util.Log
 import com.example.awesomechat.interact.InteractFriend
+import com.example.awesomechat.interact.InteractMessage
 import com.example.awesomechat.model.Friend
 import com.example.awesomechat.model.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class FriendRepository : InteractFriend {
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val db = Firebase.firestore
+class FriendRepository @Inject constructor(private val auth: FirebaseAuth, private val db: FirebaseFirestore) : InteractFriend {
     override val emailCurrent: String = auth.currentUser?.email.toString()
 
     override suspend fun getStateFriend(email: String, state: String): List<User> {
@@ -247,4 +252,11 @@ class FriendRepository : InteractFriend {
             0
         }
     }
+}
+
+@Module
+@InstallIn(ViewModelComponent::class)
+abstract class FriendModule{
+    @Binds
+    abstract fun bindInteractFriend(friendRepository: FriendRepository): InteractFriend
 }

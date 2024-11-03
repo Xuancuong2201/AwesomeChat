@@ -7,8 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.awesomechat.R
@@ -17,15 +16,15 @@ import com.example.awesomechat.interact.DialogConfirm
 import com.example.awesomechat.interact.InteractData.Companion.containsNumber
 import com.example.awesomechat.interact.InteractData.Companion.isValidEmail
 import com.example.awesomechat.interact.InteractData.Companion.isValidPassword
-import com.example.awesomechat.repository.firebase.AuthenticationRepository
 import com.example.awesomechat.viewmodel.SignUpViewModel
-import com.example.awesomechat.viewmodel.factory.ViewModelAuthenticationFactory
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class FragmentSignUp : Fragment() {
     private var _binding: FragmentSignUpBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: SignUpViewModel
+    private val  viewModel: SignUpViewModel by  activityViewModels()
     private lateinit var controller: NavController
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,8 +32,6 @@ class FragmentSignUp : Fragment() {
     ): View {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        val factory =ViewModelAuthenticationFactory.getInstance(AuthenticationRepository())
-        viewModel = ViewModelProvider(this, factory)[SignUpViewModel::class.java]
         binding.viewmodel = viewModel
         return binding.root
     }

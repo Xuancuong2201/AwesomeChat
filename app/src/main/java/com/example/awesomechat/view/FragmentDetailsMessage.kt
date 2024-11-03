@@ -16,7 +16,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -28,19 +29,18 @@ import com.example.awesomechat.adapter.DetailsMessageAdapter
 import com.example.awesomechat.adapter.ImageFromGalleryAdapter
 import com.example.awesomechat.databinding.FragmentDetailsMessageBinding
 import com.example.awesomechat.interact.InteractData.Companion.adjustList
-import com.example.awesomechat.repository.firebase.MessageRepository
 import com.example.awesomechat.viewmodel.DetailsMessageViewModel
-import com.example.awesomechat.viewmodel.factory.ViewModelChatFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInterface {
     private val args: FragmentDetailsMessageArgs by navArgs()
+    private val viewModel: DetailsMessageViewModel by activityViewModels()
     private var _binding: FragmentDetailsMessageBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: DetailsMessageViewModel
     private lateinit var detailsMessageAdapter: DetailsMessageAdapter
     private lateinit var imageFromGalleryAdapter: ImageFromGalleryAdapter
-    private lateinit var chatFactory: ViewModelChatFactory
     private lateinit var controller: NavController
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,8 +49,6 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
         _binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_details_message, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        chatFactory = ViewModelChatFactory(MessageRepository())
-        viewModel = ViewModelProvider(this, chatFactory)[DetailsMessageViewModel::class.java]
         viewModel.getDetailsMessage(args.message.email.toString())
         binding.viewmodel = viewModel
         detailsMessageAdapter = DetailsMessageAdapter(viewModel)

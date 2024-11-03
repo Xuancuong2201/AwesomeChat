@@ -13,20 +13,20 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.awesomechat.R
 import com.example.awesomechat.databinding.FragmentEditInforUserBinding
 import com.example.awesomechat.interact.InteractData
-import com.example.awesomechat.repository.firebase.UserRepository
 import com.example.awesomechat.viewmodel.EditViewModel
-import com.example.awesomechat.viewmodel.factory.ViewModelEditFactory
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class FragmentEdit_Infor_User : Fragment() {
     private var _binding : FragmentEditInforUserBinding?=null
-    private lateinit var viewModel: EditViewModel
+    private val viewModel: EditViewModel by activityViewModels()
     private lateinit var controller : NavController
     private val binding get() = _binding!!
     private lateinit var launcher: ActivityResultLauncher<Intent>
@@ -36,8 +36,6 @@ class FragmentEdit_Infor_User : Fragment() {
     ): View {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_infor_user, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        val factory = ViewModelEditFactory(UserRepository(),requireActivity().application)
-        viewModel = ViewModelProvider(this, factory)[EditViewModel::class.java]
         binding.viewmodel = viewModel
         controller=findNavController()
         openGallery()
@@ -72,11 +70,11 @@ class FragmentEdit_Infor_User : Fragment() {
         }
         viewModel.numberPhone.observe(viewLifecycleOwner){
             if(it.isEmpty()){
-                binding.edtName.error = getString(R.string.error_numberphone)
+                binding.edtPhone.error = getString(R.string.error_numberphone)
 
             }
             else if (InteractData.isNumberPhone(it)){
-                binding.edtName.error = getString(R.string.error_numberphone)
+                binding.edtPhone.error = getString(R.string.error_numberphone)
             }
             else{
                 binding.btnSave.setOnClickListener {

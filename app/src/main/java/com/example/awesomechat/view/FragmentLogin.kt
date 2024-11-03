@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.awesomechat.R
@@ -16,24 +16,22 @@ import com.example.awesomechat.databinding.FragmentLoginBinding
 import com.example.awesomechat.interact.DialogConfirm
 import com.example.awesomechat.interact.InteractData.Companion.isValidEmail
 import com.example.awesomechat.interact.InteractData.Companion.isValidPassword
-import com.example.awesomechat.repository.firebase.AuthenticationRepository
-import com.example.awesomechat.repository.firebase.UserRepository
 import com.example.awesomechat.viewmodel.LoginViewmodel
-import com.example.awesomechat.viewmodel.factory.ViewModelLoginFactory
+import dagger.hilt.android.AndroidEntryPoint
 
 
 
+@AndroidEntryPoint
 class FragmentLogin : Fragment() {
+
+    private val viewModel: LoginViewmodel by activityViewModels()
     private var _binding:FragmentLoginBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: LoginViewmodel
     private lateinit var controller : NavController
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
     {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        val factory = ViewModelLoginFactory(AuthenticationRepository(),UserRepository(),requireActivity().application)
-        viewModel = ViewModelProvider(this, factory)[LoginViewmodel::class.java]
         binding.viewmodel = viewModel
         return binding.root
     }

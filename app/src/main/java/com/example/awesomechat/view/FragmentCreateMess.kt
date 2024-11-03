@@ -1,13 +1,12 @@
 package com.example.awesomechat.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,30 +14,24 @@ import com.example.awesomechat.R
 import com.example.awesomechat.adapter.RecipientMessageAdapter
 import com.example.awesomechat.databinding.FragmentCreateMessBinding
 import com.example.awesomechat.model.Messages
-import com.example.awesomechat.repository.firebase.FriendRepository
-import com.example.awesomechat.repository.firebase.MessageRepository
 import com.example.awesomechat.viewmodel.CreateMessViewModel
 import com.example.awesomechat.viewmodel.FriendViewModel
-import com.example.awesomechat.viewmodel.factory.ViewModelChatFactory
-import com.example.awesomechat.viewmodel.factory.ViewModelFriendFactory
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class FragmentCreateMess : Fragment() {
     private var _binding: FragmentCreateMessBinding? = null
     private val binding get() = _binding!!
+    private val viewModelFriend: FriendViewModel by activityViewModels()
+    private val viewModelCreateMess: CreateMessViewModel by activityViewModels()
     private lateinit var adapterRecipient: RecipientMessageAdapter
-    private lateinit var viewModelFriend: FriendViewModel
-    private lateinit var viewModelCreateMess: CreateMessViewModel
     private lateinit var controller: NavController
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         controller = findNavController()
-        val factory = ViewModelFriendFactory(FriendRepository())
-        val factoryMess = ViewModelChatFactory(MessageRepository())
-        viewModelFriend = ViewModelProvider(this, factory)[FriendViewModel::class.java]
-        viewModelCreateMess = ViewModelProvider(this, factoryMess)[CreateMessViewModel::class.java]
         adapterRecipient = RecipientMessageAdapter(viewModelCreateMess)
         _binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_create_mess, container, false)
@@ -53,14 +46,13 @@ class FragmentCreateMess : Fragment() {
                 rcv.layoutManager = LinearLayoutManager(requireContext())
                 rcv.adapter = adapterRecipient
             }
-
-            viewModelCreateMess.user.observe(viewLifecycleOwner) {
-                if (it == null) {
-                    binding.frameFriend.visibility = View.GONE
-                } else {
-                    binding.user=it
-                    adapterRecipient.updateList(viewModelFriend.friendList.value!!)
-                    binding.frameFriend.visibility = View.VISIBLE
+        viewModelCreateMess.user.observe(viewLifecycleOwner) {
+            if (it == null) {
+                binding.frameFriend.visibility = View.GONE
+            } else {
+                binding.user=it
+                adapterRecipient.updateList(viewModelFriend.friendList.value!!)
+                binding.frameFriend.visibility = View.VISIBLE
                 }
             }
         }

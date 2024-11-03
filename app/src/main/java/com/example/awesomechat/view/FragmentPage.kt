@@ -2,32 +2,27 @@ package com.example.awesomechat.view
 
 import android.content.Intent
 import android.os.Bundle
-
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-
 import androidx.navigation.fragment.findNavController
 import com.example.awesomechat.MainActivity
 import com.example.awesomechat.R
 import com.example.awesomechat.databinding.FragmentPageBinding
 import com.example.awesomechat.dialog.DialogSelectLanguage
-import com.example.awesomechat.repository.firebase.AuthenticationRepository
-
 import com.example.awesomechat.viewmodel.PageViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-import com.example.awesomechat.viewmodel.factory.ViewModelPageFactory
 
-
+@AndroidEntryPoint
 class FragmentPage : Fragment() {
     private var _binding: FragmentPageBinding? = null
-    private lateinit var viewModelPage: PageViewModel
+    private  val viewModelPage: PageViewModel by activityViewModels()
     private lateinit var controller: NavController
     private val binding get() = _binding!!
     override fun onCreateView(
@@ -36,8 +31,6 @@ class FragmentPage : Fragment() {
     ): View {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_page, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        val factory = ViewModelPageFactory.getInstance(AuthenticationRepository(),requireActivity().application)
-        viewModelPage = ViewModelProvider(this, factory)[PageViewModel::class.java]
         binding.viewmodel = viewModelPage
         controller = findNavController()
         return binding.root

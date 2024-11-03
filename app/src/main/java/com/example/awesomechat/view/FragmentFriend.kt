@@ -10,15 +10,12 @@ import android.widget.TextView
 
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import com.example.awesomechat.R
 import com.example.awesomechat.adapter.FragmentPageAdapter
 import com.example.awesomechat.databinding.FragmentFriendBinding
-import com.example.awesomechat.repository.firebase.FriendRepository
 import com.example.awesomechat.viewmodel.FriendViewModel
 import com.example.awesomechat.viewmodel.SearchViewModel
-import com.example.awesomechat.viewmodel.factory.ViewModelFriendFactory
-import com.example.awesomechat.viewmodel.factory.ViewModelSearchFactory
 import com.google.android.material.tabs.TabLayoutMediator
 
 class FragmentFriend : Fragment() {
@@ -26,8 +23,8 @@ class FragmentFriend : Fragment() {
     private val binding get() = _binding!!
     private lateinit var customView:View
     private lateinit var adapter: FragmentPageAdapter
-    private lateinit var searchViewModel: SearchViewModel
-    private lateinit var friendViewModel: FriendViewModel
+    private val searchViewModel: SearchViewModel by activityViewModels()
+    private val friendViewModel: FriendViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,10 +33,6 @@ class FragmentFriend : Fragment() {
         adapter = FragmentPageAdapter(childFragmentManager, lifecycle)
         binding.viewPagerFriend.adapter = adapter
         binding.viewPagerFriend.offscreenPageLimit = 3
-        val factory = ViewModelSearchFactory.getInstance()
-        val factoryFriend = ViewModelFriendFactory(FriendRepository())
-        searchViewModel = ViewModelProvider(this, factory)[SearchViewModel::class.java]
-        friendViewModel = ViewModelProvider(this,factoryFriend)[FriendViewModel::class.java]
         TabLayoutMediator(binding.tabLayoutFriend, binding.viewPagerFriend) { tab, positions ->
             when(positions){
                 0->tab.text="Bạn bè"

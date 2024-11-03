@@ -5,16 +5,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.awesomechat.interact.InteractFriend
 import com.example.awesomechat.model.User
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class FriendViewModel(private val interactFriend: InteractFriend) : ViewModel() {
+@HiltViewModel
+class FriendViewModel @Inject constructor(private val interactFriend: InteractFriend) : ViewModel() {
     private val currentUserEmail = interactFriend.emailCurrent
-    val requestList: MutableLiveData<List<User>> by lazy {   MutableLiveData<List<User>>()}
-    val invitationList: MutableLiveData<List<User>> by lazy {   MutableLiveData<List<User>>()}
-    val allFriendList: MutableLiveData<List<User>> = MutableLiveData<List<User>>()
+    val requestList by lazy {   MutableLiveData<List<User>>()}
+    val invitationList by lazy {   MutableLiveData<List<User>>()}
+    val allFriendList by lazy {   MutableLiveData<List<User>>()}
+    val quantityRequest  by lazy { MutableLiveData<Int>() }
     val friendList: MutableLiveData<List<User>> = MutableLiveData<List<User>>()
-    val quantityRequest : MutableLiveData<Int> = MutableLiveData<Int>()
+
     init {
         viewModelScope.launch {
             val users = interactFriend.getRequestFriend(currentUserEmail, "request")
