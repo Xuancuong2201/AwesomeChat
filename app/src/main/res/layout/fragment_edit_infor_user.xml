@@ -3,24 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".view.FragmentEdit_Infor_User">
+
     <data>
+
         <variable
             name="viewmodel"
             type="com.example.awesomechat.viewmodel.EditViewModel" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background_root">
+
         <TextView
             android:id="@+id/tv_edit_information"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_32dp"
+            android:fontFamily="@font/lato_black"
             android:text="@string/edit_information"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size22sp"
-            android:fontFamily="@font/lato_black"
-            android:layout_marginTop="@dimen/margin_32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -29,11 +33,11 @@
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:src="@drawable/icon_back_white"
-            android:contentDescription="@string/bt_back"
             android:layout_marginStart="@dimen/margin_7dp"
             android:layout_marginTop="@dimen/margin_22dp"
+            android:contentDescription="@string/bt_back"
+            android:padding="10dp"
+            android:src="@drawable/icon_back_white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,12 +45,11 @@
             android:id="@+id/btn_Save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            android:layout_marginTop="@dimen/margin_34dp"
+            android:layout_marginEnd="15dp"
             android:text="@string/save"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size19sp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginTop="@dimen/margin_34dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -61,8 +64,9 @@
             <FrameLayout
                 android:id="@+id/fr_image"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="145dp"
                 android:layout_marginTop="35dp"
+                app:layout_constraintBottom_toTopOf="@id/tv_Name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -89,12 +93,12 @@
                 android:id="@+id/tv_Name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/name"
-                android:textSize="@dimen/text_size14sp"
-                android:textColor="@color/color_gray"
-                android:layout_marginStart="@dimen/margin_25dp"
-                android:layout_marginEnd="@dimen/margin_25dp"
+                android:layout_marginStart="24dp"
                 android:layout_marginTop="@dimen/margin_44dp"
+                android:text="@string/name"
+                android:textColor="@color/color_gray"
+                android:textSize="@dimen/text_size14sp"
+                app:layout_constraintBottom_toTopOf="@id/edt_Name"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/fr_image" />
 
@@ -102,23 +106,24 @@
                 android:id="@+id/edt_Name"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height_edittext"
-                android:text="@={viewmodel.name}"
-                android:autofillHints="name"
-                android:inputType="text"
-                android:drawableEnd="@drawable/icon_user"
-                android:layout_marginTop="@dimen/margin_7dp"
                 android:layout_marginStart="@dimen/margin_25dp"
                 android:layout_marginEnd="@dimen/margin_25dp"
+                android:autofillHints="name"
+                android:drawableEnd="@drawable/icon_user"
+                android:inputType="text"
+                android:text="@={viewmodel.name}"
+                app:layout_constraintBottom_toTopOf="@id/tv_phone"
                 app:layout_constraintTop_toBottomOf="@id/tv_Name" />
 
             <TextView
                 android:id="@+id/tv_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:text="@string/number_phone"
                 android:textColor="@color/color_gray"
                 android:textSize="@dimen/text_size14sp"
-                android:layout_marginTop="@dimen/margin_32dp"
+                app:layout_constraintBottom_toTopOf="@id/edt_Phone"
                 app:layout_constraintStart_toStartOf="@id/tv_Name"
                 app:layout_constraintTop_toBottomOf="@+id/edt_Name" />
 
@@ -126,13 +131,13 @@
                 android:id="@+id/edt_Phone"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height_edittext"
-                android:text="@={viewmodel.numberPhone}"
-                android:autofillHints="phone"
-                android:inputType="phone"
-                android:drawableEnd="@drawable/icon_phone"
-                android:layout_marginTop="@dimen/margin_7dp"
                 android:layout_marginStart="@dimen/margin_25dp"
                 android:layout_marginEnd="@dimen/margin_25dp"
+                android:autofillHints="phone"
+                android:drawableEnd="@drawable/icon_phone"
+                android:inputType="phone"
+                android:text="@={viewmodel.numberPhone}"
+                app:layout_constraintBottom_toTopOf="@id/birthday"
                 app:layout_constraintTop_toBottomOf="@id/tv_phone" />
 
             <TextView
@@ -142,7 +147,7 @@
                 android:text="@string/birthday"
                 android:textColor="@color/color_gray"
                 android:textSize="@dimen/text_size14sp"
-                android:layout_marginTop="@dimen/margin_32dp"
+                app:layout_constraintBottom_toTopOf="@id/edt_Birthday"
                 app:layout_constraintStart_toStartOf="@+id/tv_phone"
                 app:layout_constraintTop_toBottomOf="@+id/edt_Phone" />
 
@@ -150,15 +155,23 @@
                 android:id="@+id/edt_Birthday"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height_edittext"
-                android:text="@={viewmodel.birthDay}"
-                android:hint="@string/dd_mm_yyyy"
-                android:autofillHints="null"
-                android:inputType="date"
-                android:drawableEnd="@drawable/icon_birthday"
-                android:layout_marginTop="@dimen/margin_7dp"
+
                 android:layout_marginStart="@dimen/margin_25dp"
                 android:layout_marginEnd="@dimen/margin_25dp"
+                android:autofillHints="null"
+                android:drawableEnd="@drawable/icon_birthday"
+                android:hint="@string/dd_mm_yyyy"
+                android:inputType="date"
+                android:text="@={viewmodel.birthDay}"
+                app:layout_constraintBottom_toTopOf="@+id/guideline3"
                 app:layout_constraintTop_toBottomOf="@+id/birthday" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.8" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

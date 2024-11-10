@@ -1,5 +1,6 @@
 package com.example.awesomechat.view
 
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.awesomechat.MainActivity
 import com.example.awesomechat.R
 import com.example.awesomechat.adapter.MessagesAdapter
 import com.example.awesomechat.databinding.FragmentMessageBinding
@@ -35,7 +35,6 @@ class FragmentMessage : Fragment() {
         controller = (activity as MainActivity).findNavController(R.id.fragment)
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter = MessagesAdapter(object : MessagesAdapter.ItemClickListener {
@@ -46,16 +45,23 @@ class FragmentMessage : Fragment() {
                 viewModel.changeStatus(messages.email.toString())
             }
         })
+
         viewModel.messageList.observe(viewLifecycleOwner) {
+            binding.progressBar.visibility=View.GONE
             adapter.updateList(it)
         }
+
         binding.rcvMessage.let { rcv ->
             rcv.layoutManager = LinearLayoutManager(requireContext())
             rcv.adapter = adapter
         }
+
         binding.btnCreateMessage.setOnClickListener {
             controller.navigate(R.id.action_homeFragment_to_fragmentCreateMess)
         }
+
+
+
 
     }
     override fun onStart() {
@@ -67,6 +73,7 @@ class FragmentMessage : Fragment() {
                 return true
             }
         })
+
     }
 
 }

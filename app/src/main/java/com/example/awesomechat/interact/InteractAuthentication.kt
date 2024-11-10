@@ -1,6 +1,5 @@
 package com.example.awesomechat.interact
 
-import com.example.awesomechat.model.User
 
 interface InteractAuthentication {
     val emailCurrent: String

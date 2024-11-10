@@ -17,7 +17,6 @@ import com.example.awesomechat.model.Messages
 import com.example.awesomechat.viewmodel.CreateMessViewModel
 import com.example.awesomechat.viewmodel.FriendViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class FragmentCreateMess : Fragment() {
@@ -46,43 +45,58 @@ class FragmentCreateMess : Fragment() {
                 rcv.layoutManager = LinearLayoutManager(requireContext())
                 rcv.adapter = adapterRecipient
             }
-        viewModelCreateMess.user.observe(viewLifecycleOwner) {
-            if (it == null) {
-                binding.frameFriend.visibility = View.GONE
-            } else {
-                binding.user=it
-                adapterRecipient.updateList(viewModelFriend.friendList.value!!)
-                binding.frameFriend.visibility = View.VISIBLE
+            viewModelCreateMess.user.observe(viewLifecycleOwner) {
+                if (it == null) {
+                    binding.frameFriend.visibility = View.GONE
+                } else {
+                    binding.user = it
+                    adapterRecipient.updateList(viewModelFriend.friendList.value!!)
+                    binding.frameFriend.visibility = View.VISIBLE
                 }
             }
         }
 
-        binding.btnCreateMessage.setOnClickListener{
-            val message = Messages(url=viewModelCreateMess.user.value!!.url, name = viewModelCreateMess.user.value!!.name, email =viewModelCreateMess.user.value!!.email )
+        binding.btnCreateMessage.setOnClickListener {
+            val message = Messages(
+                url = viewModelCreateMess.user.value!!.url,
+                name = viewModelCreateMess.user.value!!.name,
+                email = viewModelCreateMess.user.value!!.email
+            )
             val action =
-                FragmentCreateMessDirections.actionFragmentCreateMessToFragmentDetailsMessage(message)
+                FragmentCreateMessDirections.actionFragmentCreateMessToFragmentDetailsMessage(
+                    message
+                )
+            hideFrameAndReset()
             controller.navigate(action)
 
         }
-        binding.btnDelete.setOnClickListener{
-            binding.frameFriend.visibility = View.GONE
-            viewModelCreateMess.position.postValue(-1)
-            adapterRecipient.updateList(viewModelFriend.friendList.value!!)
+
+        binding.btnDelete.setOnClickListener {
+            hideFrameAndReset()
         }
-        binding.btnBack.setOnClickListener{
+
+        binding.btnBack.setOnClickListener {
+            hideFrameAndReset()
             controller.popBackStack()
         }
 
-        binding.searchFriend.setOnQueryTextListener(object :android.widget.SearchView.OnQueryTextListener{
+        binding.searchFriend.setOnQueryTextListener(object :
+            android.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(p0: String?): Boolean {
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if(newText !=null)
+                if (newText != null)
                     adapterRecipient.filter.filter(newText)
                 return true
             }
         })
+    }
+
+    private fun hideFrameAndReset() {
+        binding.frameFriend.visibility = View.GONE
+        viewModelCreateMess.position.postValue(-1)
+        viewModelCreateMess.user.postValue(null)
     }
 }

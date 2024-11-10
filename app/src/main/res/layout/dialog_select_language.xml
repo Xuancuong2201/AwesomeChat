@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
+
     <LinearLayout
         android:layout_width="@dimen/width_dialog_language"
         android:layout_height="wrap_content"
         android:background="@drawable/background_block"
         android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,6 +24,7 @@
             android:layout_marginBottom="@dimen/margin_5dp">
 
             <RadioButton
+                android:id="@+id/rdb_vi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_10dp"
@@ -30,6 +33,7 @@
                 android:text="@string/lg_vietnamese" />
 
             <RadioButton
+                android:id="@+id/rdb_en"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_10dp"
@@ -44,22 +48,24 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="@dimen/margin_12dp">
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/bt_cancel"
                 android:layout_width="@dimen/width_button_dialog"
                 android:layout_height="@dimen/height_button_dialog"
-                android:textColor="@color/white"
+                android:layout_marginEnd="@dimen/margin_5dp"
                 android:background="@color/color_gray"
                 android:text="@string/cancel"
-                android:layout_marginEnd="@dimen/margin_5dp" />
+                android:textColor="@color/white" />
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/bt_confirm"
                 android:layout_width="80dp"
                 android:layout_height="@dimen/height_button_dialog"
+                android:layout_marginEnd="@dimen/margin_5dp"
                 android:background="@color/primary_color"
                 android:text="@string/confirm"
-                android:textColor="@color/white"
-                android:layout_marginEnd="@dimen/margin_5dp" />
+                android:textColor="@color/white" />
         </LinearLayout>
     </LinearLayout>
 </layout>

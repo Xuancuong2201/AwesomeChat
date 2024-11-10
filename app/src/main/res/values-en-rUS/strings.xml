@@ -21,6 +21,7 @@
     <string name="error_password_isValid">Invalid Password</string>
     <string name="error_email_isValid">Invalid Email</string>
     <string name="chat">Message</string>
+    <string name="all">All</string>
     <string name="personal_page">Personal page</string>
     <string name="friend">Friend</string>
     <string name="image_personal">Image Personal</string>
@@ -28,6 +29,7 @@
     <string name="select_language">select language</string>
     <string name="language">Language</string>
     <string name="vietnamese">Vietnamese</string>
+    <string name="english">English</string>
     <string name="notification">Notification</string>
     <string name="image_notification">Image Notification</string>
     <string name="button_notification">Button notification</string>
@@ -66,4 +68,7 @@
     <string name="input_name_user">Enter name user</string>
     <string name="refuse">Refuse</string>
     <string name="image_sent">image sent</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="image">Image</string>
+    <string name="notifi">Notification</string>
 </resources>

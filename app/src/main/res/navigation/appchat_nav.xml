@@ -16,6 +16,9 @@
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true"
             />
+        <action
+            android:id="@+id/splash_go_to_HomeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"

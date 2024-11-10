@@ -1,12 +1,14 @@
 package com.example.awesomechat.adapter
 
-import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.awesomechat.R
 import com.example.awesomechat.databinding.ItemFriendBinding
@@ -14,15 +16,9 @@ import com.example.awesomechat.databinding.ItemHeaderBinding
 import com.example.awesomechat.interact.InteractData
 import com.example.awesomechat.model.User
 import com.example.awesomechat.viewmodel.FriendViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class FriendAdapter(val viewmodel: FriendViewModel) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
-    private val itemListInteract = arrayListOf<Any>()
-    private val itemListRoot = arrayListOf<Any>()
-
+    ListAdapter<Any, RecyclerView.ViewHolder>(FriendDiffCallback()),Filterable {
     class ItemUser(
         private val itemBinding: ItemFriendBinding,
         private val viewmodel: FriendViewModel,
@@ -31,56 +27,38 @@ class FriendAdapter(val viewmodel: FriendViewModel) :
         fun bind(item: User) {
             itemBinding.user = item
             when (item.state) {
-                "friend" -> itemBinding.btSelect.visibility = View.GONE
-                "request" -> itemBinding.btSelect.let {
-                    it.text = "Hủy"
-                    it.setTextColor(
+                "friend" ->itemBinding.btSelect.visibility = View.GONE
+                "request" -> itemBinding.btSelect.apply {
+                    text = "Hủy"
+                    setTextColor(
                         ContextCompat.getColor(
                             itemBinding.root.context,
                             R.color.primary_color
                         )
                     )
-                    it.setBackgroundResource(R.drawable.custom_button_sented)
-                    it.setOnClickListener {
-                        adapter.removeUser(bindingAdapterPosition)
-                        CoroutineScope(Dispatchers.IO).launch { viewmodel.cancelRequestFriend(item.email) }
+                    setBackgroundResource(R.drawable.custom_button_sented)
+                    setOnClickListener {
+                        viewmodel.cancelRequestFriend(item.email)
                     }
                 }
 
-                "none" -> {
-                    itemBinding.btSelect.text = "Kêt bạn"
-                    itemBinding.btSelect.let {
-                        it.setOnClickListener {
-                            CoroutineScope(Dispatchers.IO).launch { viewmodel.sendRequestFriend(item.email) }
-                            itemBinding.btSelect.let { button ->
-                                button.text = "Hủy"
-                                button.setTextColor(
-                                    ContextCompat.getColor(
-                                        itemBinding.root.context,
-                                        R.color.primary_color
-                                    )
-                                )
-                                button.setBackgroundResource(R.drawable.custom_button_sented)
-                            }
+                "user" -> {
+                    itemBinding.btSelect.apply {
+                        text = "Kết bạn"
+                        setOnClickListener {
+                            viewmodel.sendRequestFriend(item.email)
                         }
                     }
                 }
 
                 "invitation" -> {
                     itemBinding.btDelete.setOnClickListener {
-                        adapter.removeUser(bindingAdapterPosition)
-                        CoroutineScope(Dispatchers.IO).launch {
-                            viewmodel.refuseInvitationFriend(item.email)
-                        }
+                        viewmodel.refuseInvitationFriend(item.email)
                     }
                     itemBinding.btSelect.setOnClickListener {
-                        adapter.removeUser(bindingAdapterPosition)
-                        CoroutineScope(Dispatchers.IO).launch {
-                            viewmodel.acceptInvitationFriend(item.email)
-                        }
+                        viewmodel.acceptInvitationFriend(item.email)
                     }
                 }
-
             }
         }
     }
@@ -113,37 +91,31 @@ class FriendAdapter(val viewmodel: FriendViewModel) :
             else -> throw IllegalArgumentException("Invalid ViewType")
         }
     }
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is ItemHeader -> holder.bind(itemListInteract[position] as Char)
-            is ItemUser -> holder.bind(itemListInteract[position] as User)
+            is ItemHeader -> holder.bind(getItem(position) as Char)
+            is ItemUser -> holder.bind(getItem(position) as User)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (itemListInteract[position]) {
+        return when (getItem(position)) {
             is User -> InteractData.TYPE_ITEM
             is Char -> InteractData.TYPE_HEADER
             else -> throw IllegalArgumentException("Invalid ViewType")
         }
     }
 
-    override fun getItemCount(): Int {
-        return itemListInteract.size
-    }
-
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val results = FilterResults()
-                itemListInteract.addAll(itemListRoot)
                 val filteredList: MutableList<Any> = mutableListOf()
                 if (constraint.isNullOrEmpty()) {
-                    filteredList.addAll(itemListRoot)
+                    filteredList.addAll(currentList)
                 } else {
                     val filterPattern = constraint.toString().lowercase().trim()
-                    for (it in itemListRoot) {
+                    for (it in currentList) {
                         if (it is User && it.name.lowercase().contains(filterPattern)) {
                             filteredList.add(it)
                         }
@@ -152,34 +124,26 @@ class FriendAdapter(val viewmodel: FriendViewModel) :
                 results.values = filteredList
                 return results
             }
-
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                updateListFilter(
-                    (results?.values as? List<User>)?.toMutableList() ?: mutableListOf()
-                )
+                val filteredUsers = (results?.values as? List<User>) ?: emptyList()
+                updateListFilter(filteredUsers)
             }
         }
     }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateList(updateList: List<Any>) {
-        itemListInteract.clear()
-        itemListRoot.clear()
-        itemListInteract.addAll(updateList)
-        itemListRoot.addAll(updateList)
-        notifyDataSetChanged()
+    fun updateListFilter(filteredUsers: List<User>) {
+        submitList(filteredUsers)
     }
+    class FriendDiffCallback : DiffUtil.ItemCallback<Any>() {
+        override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
+            return when {
+                oldItem is User && newItem is User -> oldItem.email == newItem.email
+                oldItem is Char && newItem is Char -> oldItem == newItem
+                else -> false
+            }
+        }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateListFilter(updateList: List<Any>) {
-        itemListInteract.clear()
-        itemListInteract.addAll(updateList)
-        notifyDataSetChanged()
+        override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
+            return areItemsTheSame(oldItem, newItem)
+        }
     }
-
-    fun removeUser(position: Int) {
-        itemListInteract.removeAt(position)
-        notifyItemRemoved(position)
-    }
-
 }

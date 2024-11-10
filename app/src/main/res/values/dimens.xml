@@ -3,7 +3,7 @@
     <dimen name="text_size30sp">30sp</dimen>
     //fragment_login
     <dimen name="margin_fragment">24dp</dimen>
-    <dimen name="marginTop_icon_login">81dp</dimen>
+    <dimen name="marginTop_icon_login">41dp</dimen>
     <dimen name="margin_3dp">3dp</dimen>
     <dimen name="margin_11dp">11dp</dimen>
     <dimen name="margin_61dp">61dp</dimen>

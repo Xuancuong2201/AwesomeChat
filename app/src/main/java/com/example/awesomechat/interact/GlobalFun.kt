@@ -1,14 +1,14 @@
 package com.example.awesomechat.interact
 
 
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.view.marginTop
 import androidx.databinding.BindingAdapter
-import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.awesomechat.R
 import com.example.awesomechat.model.DetailMessage
 import com.example.awesomechat.model.User
 import java.text.SimpleDateFormat
@@ -38,18 +38,27 @@ class InteractData {
 
         fun adjustList(list: List<DetailMessage>): List<DetailMessage> {
             for (i in 0..list.size step 1) {
-                if(i+1<list.size){
-                    if (list[i + 1].sentby == list[i].sentby) {
-                        list[i].time = null
-                    }
+                if (i + 1 < list.size) {
+                    if (list[i + 1].sentby == list[i].sentby)
+                        list[i].show = false
+                    else
+                        list[i].show = true
                 }
             }
             return list
         }
 
         fun isValidDateFormat(date: String): Boolean {
-            val regex = Regex("""^([0-2][0-9]|(3)[0-1])/(0[1-9]|1[0-2])/(\\d{4})$""")
-            return regex.matches(date)
+            return try {
+                val format: String = "dd/MM/yyyy"
+                val sdf = SimpleDateFormat(format, Locale.getDefault())
+                sdf.isLenient = false
+                sdf.parse(date)
+                true
+            } catch (e: Exception) {
+                false
+            }
+
         }
 
         fun containsNumber(input: String): Boolean {
@@ -83,41 +92,71 @@ class InteractData {
         }
     }
 }
+
 @BindingAdapter("getFontFamily")
-fun getFortFamily(view: TextView, status:Boolean) :String {
-    if(status)
-       return "@font/light"
+fun getFortFamily(view: TextView, status: Boolean): String {
+    if (status)
+        return "@font/light"
     else
         return "@font/lato_black"
 }
 
 @BindingAdapter("showDate")
 fun showDate(view: TextView, date: Date?) {
-    val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-    if(date==null){
-        view.visibility = View.GONE
+    val currentTime = Date()
+    val timeDifference = currentTime.time - date!!.time
+    val differenceInDays = timeDifference / (1000 * 60 * 60)
+    if (differenceInDays > 48) {
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        view.text = simpleDateFormat.format(date)
+    } else if (differenceInDays in 25..47) {
+        view.text = view.context.getString(R.string.yesterday)
+    } else {
+        val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        view.text = simpleDateFormat.format(date)
     }
-    else
-        view.text=sdf.format(date).toString()
+}
+
+@BindingAdapter("showDateDetails")
+fun showDateDetails(view: TextView, date: Date?) {
+    val currentTime = Date()
+    val timeDifference = currentTime.time - date!!.time
+    val differenceInDays = timeDifference / (1000 * 60 * 60)
+    if (differenceInDays > 48) {
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        view.text = simpleDateFormat.format(date)
+    } else if (differenceInDays in 25..47) {
+        view.text = view.context.getString(R.string.yesterday)
+    } else {
+        val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        view.text = simpleDateFormat.format(date)
+    }
 }
 
 @BindingAdapter("checkMess")
-fun checkMess(view:View,type :String) {
+fun checkMess(view: View, type: String) {
     view.visibility = if (type == "mess") View.VISIBLE else View.GONE
 }
 
 @BindingAdapter("checkMultiImage")
-fun checkMultiImage(view:View,type :String) {
+fun checkMultiImage(view: View, type: String) {
     view.visibility = if (type == "multi image") View.VISIBLE else View.GONE
 }
+
 @BindingAdapter("checkImage")
-fun checkImage(view:View,type :String) {
+fun checkImage(view: View, type: String) {
     view.visibility = if (type == "image") View.VISIBLE else View.GONE
 }
 
 
-
-
+@BindingAdapter("loadImageMessage")
+fun loadImageMessage(view: ImageView, message: DetailMessage) {
+    if (message.type != "mess") {
+        Glide.with(view.context)
+            .load(message.content)
+            .into(view)
+    }
+}
 
 @BindingAdapter("imageUrlPerson")
 fun loadImagePerson(view: ImageView, url: String?) {

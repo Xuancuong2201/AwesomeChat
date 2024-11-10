@@ -24,11 +24,6 @@ class LoginViewmodel @Inject constructor( val interactAu: InteractAuthentication
     val password by lazy { MutableLiveData<String>() }
     val result by lazy { MutableLiveData(false) }
     val stateLogin: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    init {
-        if(interactAu.checkUserCurrent()){
-            stateLogin.postValue(true)
-        }
-    }
     fun login() {
         interactAu.login(email.value.toString(), password.value.toString()) {
             if (it) {

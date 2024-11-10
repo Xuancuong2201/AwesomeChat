@@ -10,8 +10,8 @@ import com.example.awesomechat.databinding.ItemMessageRecipientSelectBinding
 import com.example.awesomechat.model.User
 import com.example.awesomechat.viewmodel.CreateMessViewModel
 
-class RecipientMessageAdapter (val viewModel: CreateMessViewModel) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>(),Filterable {
+class RecipientMessageAdapter(val viewModel: CreateMessViewModel) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private val itemListRoot = arrayListOf<User>()
     private val itemListInteract = arrayListOf<User>()
 
@@ -31,6 +31,7 @@ class RecipientMessageAdapter (val viewModel: CreateMessViewModel) :
             }
         }
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ItemUser(
             ItemMessageRecipientSelectBinding.inflate(

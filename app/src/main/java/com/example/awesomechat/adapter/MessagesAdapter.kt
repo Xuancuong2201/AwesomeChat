@@ -1,12 +1,14 @@
 package com.example.awesomechat.adapter
 
 import android.annotation.SuppressLint
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.example.awesomechat.R
 import com.example.awesomechat.databinding.ItemMessageBinding
 import com.example.awesomechat.model.Messages
 
@@ -22,6 +24,13 @@ class MessagesAdapter(private val listener: ItemClickListener) :
     ) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(item: Messages) {
             itemBinding.message = item
+
+            if (item.type.equals("mess")) {
+                itemBinding.tvCurrentMessage.text = item.currentMessage
+            } else
+                itemBinding.tvCurrentMessage.text =
+                    itemBinding.root.context.getString(R.string.image)
+
             itemBinding.root.setOnClickListener {
                 listener.onItemClick(adapterPosition, item)
             }
@@ -29,14 +38,21 @@ class MessagesAdapter(private val listener: ItemClickListener) :
                 0 -> {
                     itemBinding.notification.visibility = View.GONE
                     itemBinding.borderImage.visibility = View.GONE
+                    itemBinding.tvCurrentMessage.setTypeface(null, Typeface.NORMAL);
                 }
 
                 in 1..9 -> {
+                    itemBinding.notification.visibility = View.VISIBLE
+                    itemBinding.borderImage.visibility = View.VISIBLE
                     itemBinding.quantityMess.text = item.quantity.toString()
+                    itemBinding.tvCurrentMessage.setTypeface(null, Typeface.BOLD);
                 }
 
                 else -> {
                     itemBinding.quantityMess.text = "+9"
+                    itemBinding.notification.visibility = View.VISIBLE
+                    itemBinding.borderImage.visibility = View.VISIBLE
+                    itemBinding.tvCurrentMessage.setTypeface(null, Typeface.BOLD);
                 }
             }
 
@@ -70,12 +86,14 @@ class MessagesAdapter(private val listener: ItemClickListener) :
         itemListRoot.addAll(updateList)
         notifyDataSetChanged()
     }
+
     @SuppressLint("NotifyDataSetChanged")
     fun updateListFilter(updateList: List<Messages>) {
         itemListInteract.clear()
         itemListInteract.addAll(updateList)
         notifyDataSetChanged()
     }
+
     interface ItemClickListener {
         fun onItemClick(position: Int, messages: Messages)
     }
@@ -99,6 +117,7 @@ class MessagesAdapter(private val listener: ItemClickListener) :
                 results.values = filteredList
                 return results
             }
+
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 val values = results?.values
                 if (values is List<*>) {

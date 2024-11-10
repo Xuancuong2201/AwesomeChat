@@ -19,17 +19,26 @@ class DetailsMessageViewModel @Inject constructor(val interactMessage: InteractM
     val listDetailsMessage by lazy { MutableLiveData<List<DetailMessage>>() }
     val listImageLiveData by lazy { MutableLiveData<List<String>>() }
     val stateButton: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
-
     fun getDetailsMessage(recipient: String) {
         viewModelScope.launch {
-            listDetailsMessage.value = interactMessage.getDetailsMessage(recipient)
+            val idUser :String = interactMessage.fetchIdUser(interactMessage.emailCurrent)!!
+            interactMessage.listenerChangeDetailsMessage(recipient).collect { messages ->
+                val updatedMessages = messages.map { message ->
+                    message.apply {
+                        sentby = if (this.sentby == idUser) "user" else "recipient"
+                    }
+                }
+                val sortedMessages = updatedMessages.sortedBy {it.time }
+                listDetailsMessage.postValue(sortedMessages)
+            }
         }
     }
 
-    fun sentMessage(recipient: String) {
+    suspend fun sentMessage(recipient: String) {
         viewModelScope.launch {
-            interactMessage.sentMessage(recipient, content.value.toString())
-        }
+            interactMessage.sentMessage(recipient,content.value.toString())
+        }.join()
+
     }
 
     suspend fun sentImage(recipient: String) {
@@ -53,23 +62,17 @@ class DetailsMessageViewModel @Inject constructor(val interactMessage: InteractM
 
     fun selectImage(uri: String) {
         val currentList = listImageLiveData.value?.toMutableList() ?: mutableListOf()
-        if (!currentList.contains(uri)) {
-            currentList.add(uri)
-            listImageLiveData.postValue(currentList)
-        }
-        else{
+        if (currentList.contains(uri)) {
             currentList.remove(uri)
-            listImageLiveData.postValue(currentList)
+        } else {
+            currentList.add(uri)
         }
+        listImageLiveData.postValue(currentList)
     }
 
     fun clearListImage(){
         listImageLiveData.value= emptyList()
     }
 
-    fun createConversation(recipient: String){
-        viewModelScope.launch {
-            interactMessage.createConversation(recipient)
-        }
-    }
+
 }

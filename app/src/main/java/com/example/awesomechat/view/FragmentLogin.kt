@@ -7,13 +7,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.awesomechat.R
 import com.example.awesomechat.databinding.FragmentLoginBinding
-import com.example.awesomechat.interact.DialogConfirm
+import com.example.awesomechat.dialog.DialogConfirm
 import com.example.awesomechat.interact.InteractData.Companion.isValidEmail
 import com.example.awesomechat.interact.InteractData.Companion.isValidPassword
 import com.example.awesomechat.viewmodel.LoginViewmodel
@@ -60,8 +61,21 @@ class FragmentLogin : Fragment() {
                true-> {controller.navigate(R.id.go_to_homeFragment)
                         this.onDetach() }
                false-> {val dialog = DialogConfirm.newInstance(getString(R.string.login_fail))
+                   binding.progressBar.visibility=View.GONE
+                   binding.tvStatus.text = getString(R.string.signIn1)
                     dialog.show(childFragmentManager,"Dialog_Confirm")}
                 null-> Log.e("Tt","OK")
+            }
+        }
+        viewModel.result.observe(viewLifecycleOwner){
+            val color = if (it) R.color.primary_color else R.color.no_focus
+            binding.btnLogin.setBackgroundColor(ContextCompat.getColor(requireContext(), color))
+        }
+        binding.btnLogin.setOnClickListener{
+            if(viewModel.result.value==true){
+                binding.progressBar.visibility=View.VISIBLE
+                binding.tvStatus.text = getString(R.string.please_wait)
+                viewModel.login()
             }
         }
     }

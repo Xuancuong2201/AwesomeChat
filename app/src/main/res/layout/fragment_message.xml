@@ -3,22 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".view.FragmentMessage">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background_root">
+
         <TextView
             android:id="@+id/tv_Message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_12dp"
+            android:layout_marginTop="@dimen/margin_10dp"
+            android:fontFamily="@font/lato_black"
             android:text="@string/message"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size30sp"
-            android:fontFamily="@font/lato_black"
-            android:layout_marginStart="@dimen/margin_12dp"
-            android:layout_marginTop="@dimen/margin_10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/btn_createMessage"
             android:layout_width="@dimen/height_icon"
@@ -34,21 +37,33 @@
             android:id="@+id/search_Message"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_edittext"
-            android:iconifiedByDefault="false"
-            android:inputType="text"
-            android:queryHint="@string/search_friend"
             android:layout_marginStart="@dimen/margin_12dp"
             android:layout_marginTop="@dimen/margin_22dp"
             android:layout_marginEnd="@dimen/margin_12dp"
             android:background="@drawable/custom_search"
+            android:iconifiedByDefault="false"
+            android:inputType="text"
+            android:queryHint="@string/search_friend"
             app:layout_constraintTop_toBottomOf="@+id/tv_Message" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rcv_Message"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="@drawable/background_block"
-                android:layout_marginTop="@dimen/margin_22dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/search_Message" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcv_Message"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/margin_22dp"
+            android:background="@drawable/background_block"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_Message" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:progressTint="@color/primary_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

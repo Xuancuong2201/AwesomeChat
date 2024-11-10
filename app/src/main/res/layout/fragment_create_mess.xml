@@ -3,36 +3,41 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".view.FragmentCreateMess">
-<data>
-    <variable
-        name="user"
-        type="com.example.awesomechat.model.User" />
-</data>
+
+    <data>
+
+        <variable
+            name="user"
+            type="com.example.awesomechat.model.User" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background_root">
+
         <TextView
             android:id="@+id/tv_CreateMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_15dp"
+            android:fontFamily="@font/lato_black"
             android:text="@string/create_message"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size22sp"
-            android:fontFamily="@font/lato_black"
-            android:layout_marginTop="@dimen/margin_15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/margin_10dp"
-            android:src="@drawable/icon_back_white"
-            android:contentDescription="@string/bt_back"
             android:layout_marginStart="@dimen/margin_7dp"
             android:layout_marginTop="@dimen/margin_7dp"
+            android:contentDescription="@string/bt_back"
+            android:padding="@dimen/margin_10dp"
+            android:src="@drawable/icon_back_white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,13 +45,13 @@
             android:id="@+id/search_Friend"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_edittext"
-            android:iconifiedByDefault="false"
-            android:inputType="text"
-            android:queryHint="@string/search_friend"
-            android:background="@drawable/custom_search"
             android:layout_marginStart="@dimen/margin_12dp"
             android:layout_marginTop="@dimen/margin_22dp"
             android:layout_marginEnd="@dimen/margin_12dp"
+            android:background="@drawable/custom_search"
+            android:iconifiedByDefault="false"
+            android:inputType="text"
+            android:queryHint="@string/search_friend"
             app:layout_constraintTop_toBottomOf="@+id/tv_CreateMessage" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -62,12 +67,12 @@
                 android:id="@+id/tv_ListFriend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/friend_list"
-                android:textColor="@color/no_focus"
-                android:textStyle="bold"
-                android:textSize="@dimen/text_size17sp"
                 android:layout_marginStart="@dimen/margin_12dp"
                 android:layout_marginTop="@dimen/margin_25dp"
+                android:text="@string/friend_list"
+                android:textColor="@color/no_focus"
+                android:textSize="@dimen/text_size17sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -83,8 +88,8 @@
                 android:id="@+id/frame_friend"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height_bottom_create"
-                android:visibility="gone"
                 android:background="@color/background"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/rcv_createMessage"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -102,17 +107,18 @@
 
                     <ImageView
                         android:id="@+id/img_personal"
+                        imageUrlPerson="@{user.url}"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        imageUrlPerson="@{user.url}"
                         android:contentDescription="@string/image_personal" />
+
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/btn_delete"
                         android:layout_width="@dimen/size_icon_close"
                         android:layout_height="@dimen/size_icon_close"
+                        android:layout_gravity="top|end"
                         android:layout_marginTop="-4dp"
                         android:layout_marginEnd="-4dp"
-                        android:layout_gravity="top|end"
                         android:contentDescription="@string/notification_badge"
                         android:src="@drawable/icon_close" />
                 </FrameLayout>
@@ -121,11 +127,12 @@
                     android:id="@+id/btn_createMessage"
                     android:layout_width="@dimen/size_button_circle"
                     android:layout_height="@dimen/size_button_circle"
-                    android:background="@drawable/custom_circle_button"
                     android:layout_marginEnd="@dimen/margin_12dp"
+                    android:background="@drawable/custom_circle_button"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
+
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

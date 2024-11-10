@@ -1,6 +1,7 @@
 package com.example.awesomechat.viewmodel
 
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,10 +17,12 @@ class ChatViewModel @Inject constructor(private val interactMessage: InteractMes
     val messageList: MutableLiveData<List<Messages>> by lazy {   MutableLiveData<List<Messages>>() }
     init {
         viewModelScope.launch {
-            val message = interactMessage.getListMessage()
-            messageList.postValue(message)
+            interactMessage.getListMessage().collect { users ->
+                messageList.postValue(users)
+            }
         }
     }
+
     fun changeStatus(email:String){
         viewModelScope.launch {
             interactMessage.changeStatusMessage(email)

@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
+
         <variable
             name="message"
             type="com.example.awesomechat.model.Messages" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/border_image"
                     android:layout_width="68dp"
                     android:layout_height="68dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/border_image"/>
+                    android:background="@drawable/border_image" />
+
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/img_personal"
                     imageUrlPerson="@{message.url}"
@@ -31,9 +38,10 @@
                     android:layout_height="64dp"
                     android:layout_margin="12dp"
                     android:contentDescription="@string/image_personal"
-                    app:civ_border_width="3dp"
-                    app:civ_border_color="@color/white" />
+                    app:civ_border_color="@color/white"
+                    app:civ_border_width="3dp" />
             </FrameLayout>
+
             <FrameLayout
                 android:id="@+id/notification"
                 android:layout_width="wrap_content"
@@ -41,13 +49,15 @@
                 android:layout_gravity="end|top"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="4dp">
+
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:contentDescription="@string/notification_badge"
                     android:src="@drawable/circle_badge"
                     app:civ_border_color="@color/white"
-                    app:civ_border_width="3dp"/>
+                    app:civ_border_width="3dp" />
+
                 <TextView
                     android:id="@+id/quantityMess"
                     android:layout_width="wrap_content"
@@ -59,11 +69,12 @@
                     android:textStyle="bold" />
             </FrameLayout>
         </FrameLayout>
+
         <TextView
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/lato_black"
+            android:textStyle="bold"
             android:text="@{message.name}"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="@+id/gl_Vertical"
@@ -74,19 +85,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            getFontFamily="@{message.status}"
-            android:text="@{message.currentMessage}"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="@+id/gl_Vertical"
             app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
         <TextView
             android:id="@+id/tv_Time"
+            getFontFamily="@{message.status}"
+            showDate="@{message.time}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            getFontFamily="@{message.status}"
-            showDate="@{message.time}"
             android:textSize="11sp"
             app:layout_constraintBottom_toBottomOf="@+id/textView5"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -99,12 +108,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/gl_Vertical" />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_Horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.3" />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_Vertical"
             android:layout_width="wrap_content"

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
+
         <variable
             name="user"
             type="com.example.awesomechat.model.User" />
@@ -11,6 +13,7 @@
         android:id="@+id/frame_recipient_select"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <ImageView
             android:id="@+id/img_personal"
             imageUrlPerson="@{user.url}"
@@ -26,10 +29,10 @@
             android:id="@+id/tv_Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_12dp"
+            android:fontFamily="@font/lato_black"
             android:text="@{user.name}"
             android:textSize="@dimen/text_size16sp"
-            android:fontFamily="@font/lato_black"
-            android:layout_marginStart="@dimen/margin_12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/img_personal"
             app:layout_constraintTop_toTopOf="parent" />
@@ -47,12 +50,11 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/no_focus"
-            android:layout_marginEnd="@dimen/margin_12dp"
             android:layout_marginStart="@dimen/margin_60dp"
+            android:layout_marginEnd="@dimen/margin_12dp"
+            android:background="@color/no_focus"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

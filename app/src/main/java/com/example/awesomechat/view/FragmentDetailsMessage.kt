@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -49,11 +49,11 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
         _binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_details_message, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        viewModel.getDetailsMessage(args.message.email.toString())
         binding.viewmodel = viewModel
         detailsMessageAdapter = DetailsMessageAdapter(viewModel)
         imageFromGalleryAdapter = ImageFromGalleryAdapter(this)
         imageFromGalleryAdapter.submitList(getListImageFromGallery())
+        viewModel.getDetailsMessage(args.message.email.toString())
         return binding.root
     }
 
@@ -88,19 +88,13 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
         }
 
         viewModel.listDetailsMessage.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()){
+            if(it.isNotEmpty()){
                 detailsMessageAdapter.updateList(adjustList(it))
-                binding.tvStatus.visibility=View.GONE
-                binding.imgPersonal.visibility=View.GONE
                 binding.rcvDetailsMessage.let { rcv ->
                     rcv.layoutManager = LinearLayoutManager(requireContext())
                     rcv.adapter = detailsMessageAdapter
                     rcv.scrollToPosition(it.size - 1)
-            } }
-            else{
-                viewModel.createConversation(args.message.email.toString())
-                binding.tvStatus.visibility=View.VISIBLE
-                binding.imgPersonal.visibility=View.VISIBLE
+                }
             }
         }
 
@@ -114,17 +108,18 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
 
         binding.btnBack.setOnClickListener {
             controller.popBackStack()
-        }
+            viewModel.listDetailsMessage.postValue(emptyList())
+            this.onDestroy()
 
-//        binding.rcvDetailsMessage.viewTreeObserver.addOnGlobalLayoutListener {
-//            binding.rcvDetailsMessage.smoothScrollToPosition(detailsMessageAdapter.itemCount - 1)
-//        }
+        }
 
         binding.btnSend.setOnClickListener {
             if (binding.tvMessage.text.toString().isNotEmpty()) {
-                viewModel.sentMessage(args.message.email.toString())
-                viewModel.getDetailsMessage(args.message.email.toString())
-                binding.tvMessage.text.clear()
+                lifecycleScope.launch {
+                    viewModel.sentMessage(args.message.email.toString())
+                    viewModel.getDetailsMessage(args.message.email.toString())
+                    binding.tvMessage.text.clear()
+                }
             }
         }
 
@@ -158,15 +153,17 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
         }
 
         binding.btSentImage.setOnClickListener {
+            binding.btSentImage.visibility = View.GONE
+            binding.progressBar.visibility = View.VISIBLE
             lifecycleScope.launch {
                 viewModel.apply {
                     sentImage(args.message.email.toString())
-                    getDetailsMessage(args.message.email.toString())
                     clearListImage()
+                    binding.progressBar.visibility = View.GONE
+                    getDetailsMessage(args.message.email.toString())
                 }
             }
         }
-
     }
 
     private fun getListImageFromGallery(): MutableList<String> {
@@ -199,4 +196,6 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
     override fun selectImage(position: Int, uri: String) {
         viewModel.selectImage(uri)
     }
+
+
 }

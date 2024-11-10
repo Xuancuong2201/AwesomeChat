@@ -1,10 +1,12 @@
 package com.example.awesomechat.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.awesomechat.interact.InteractData
 import com.example.awesomechat.interact.InteractUser
 import com.example.awesomechat.model.User
 import com.example.awesomechat.util.DataStoreManager
@@ -22,6 +24,7 @@ class EditViewModel @Inject constructor(private val interact: InteractUser, @App
     val url by lazy {MutableLiveData<String>()}
     val birthDay by lazy {MutableLiveData<String>()}
     val numberPhone by lazy {MutableLiveData<String>()}
+    val result=  MutableLiveData(false)
     init {
         viewModelScope.launch {
             async {
@@ -31,6 +34,7 @@ class EditViewModel @Inject constructor(private val interact: InteractUser, @App
                 name.postValue(user.name)
                 birthDay.postValue(user.birthday)
                 url.postValue(user.url)
+                result.postValue(false)
             }.await()
         }
     }
@@ -39,11 +43,16 @@ class EditViewModel @Inject constructor(private val interact: InteractUser, @App
             async {
                 interact.updaterRecordUser(url.value.toString().toUri(), email.value.toString(), name.value.toString(), numberPhone.value.toString(), birthDay.value.toString())
             }.await()
-            val user = User(url.value.toString(), email.value.toString(), name.value.toString(), numberPhone.value.toString(), birthDay.value.toString())
+            val user = User(url.value.toString(), name.value.toString(), email.value.toString(), numberPhone.value.toString(), birthDay.value.toString())
             url.postValue(user.url)
             name.postValue(user.name)
             DataStoreManager.saveInformationUser(user, context)
         }
     }
 
+    fun checkEnable() {
+        result.value = !( name.value.isNullOrEmpty() || birthDay.value.isNullOrEmpty() || numberPhone.value.isNullOrEmpty()
+                || InteractData.containsNumber(name.value.toString()) ||!InteractData.isValidDateFormat(birthDay.value.toString())
+                ||InteractData.isNumberPhone(numberPhone.value.toString()))
+    }
 }

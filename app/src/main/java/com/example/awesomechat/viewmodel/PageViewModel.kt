@@ -1,8 +1,6 @@
 package com.example.awesomechat.viewmodel
 
-import android.app.Application
 import android.content.Context
-
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,18 +14,24 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class PageViewModel @Inject constructor(private val interact: InteractAuthentication,@ApplicationContext val context: Context) : ViewModel() {
+class PageViewModel @Inject constructor(
+    private val interact: InteractAuthentication,
+    @ApplicationContext val context: Context
+) : ViewModel() {
     val currentUserEmail by lazy { MutableLiveData<String>(interact.emailCurrent) }
-    val name  by lazy { MutableLiveData<String>() }
-    val url  by lazy { MutableLiveData<String>() }
+    val name by lazy { MutableLiveData<String>() }
+    val url by lazy { MutableLiveData<String>() }
+    val language by lazy { MutableLiveData<String>() }
+
     init {
         viewModelScope.launch {
-            val result=async {  DataStoreManager.getSavedInformationUser(context)}.await()
+            val result = async { DataStoreManager.getSavedInformationUser(context) }.await()
             name.postValue(result.name)
             url.postValue(result.url)
         }
     }
-    fun getUrlAndName(){
+
+    fun getUrlAndName() {
         viewModelScope.launch {
             val result = async { DataStoreManager.getSavedInformationUser(context) }.await()
             url.postValue(result.url)
@@ -36,6 +40,7 @@ class PageViewModel @Inject constructor(private val interact: InteractAuthentica
         }
 
     }
+
     fun logOut() {
         interact.signOut()
     }

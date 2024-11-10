@@ -3,10 +3,11 @@ package com.example.awesomechat.model
 import java.util.Date
 
 data class DetailMessage (
-    val content:String,
-    val sentby: String,
-    val status: Boolean,
+    val content:String="",
+    var sentby: String="",
+    var status: Boolean=false,
     var time: Date?=null,
-    val type: String,
-    val multiImage:MutableList<String>?= mutableListOf()
+    val type: String="",
+    val multiImage:MutableList<String>?= mutableListOf(),
+    var show:Boolean=true
 )

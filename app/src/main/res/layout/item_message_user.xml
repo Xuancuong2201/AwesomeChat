@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
+
         <variable
             name="message"
             type="com.example.awesomechat.model.DetailMessage" />
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_5dp">
+
         <LinearLayout
+            android:id="@+id/frame_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="end"
@@ -23,39 +29,46 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcv_MultiImage"
                 checkMultiImage="@{message.type}"
-                android:layout_marginTop="@dimen/margin_5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:contentDescription="@string/image_sent"
-                app:imageUrlBackground="@{message.content}"
-                checkImage="@{message.type}"
-                android:layout_marginEnd="@dimen/margin_10dp" />
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_5dp"
+                android:layout_marginEnd="@dimen/margin_10dp" />
+
+            <ImageView
+                checkImage="@{message.type}"
+                loadImageMessage="@{message}"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginEnd="@dimen/margin_10dp"
+                android:contentDescription="@string/image_sent"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                checkMess="@{message.type}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin_10dp"
+                android:background="@drawable/background_sent_chat"
+                android:padding="@dimen/margin_15dp"
                 android:text="@{message.content}"
+                android:textAlignment="textStart"
+                android:textColor="@color/white"
                 android:textSize="@dimen/text_size16sp"
                 android:textStyle="bold"
-                android:textColor="@color/white"
-                android:textAlignment="textStart"
-                checkMess="@{message.type}"
-                android:padding="@dimen/margin_15dp"
-                android:background="@drawable/background_sent_chat"
-                android:layout_marginEnd="@dimen/margin_10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
+                android:id="@+id/tv_time"
+                showDateDetails="@{message.time}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                showDate="@{message.time}"
-                android:textColor="@color/color_gray"
                 android:layout_marginTop="@dimen/margin_2dp"
-                android:layout_marginEnd="@dimen/margin_10dp" />
+                android:layout_marginEnd="@dimen/margin_10dp"
+                android:textColor="@color/color_gray" />
         </LinearLayout>
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline10"
             android:layout_width="wrap_content"

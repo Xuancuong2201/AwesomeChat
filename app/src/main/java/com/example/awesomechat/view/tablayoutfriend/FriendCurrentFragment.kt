@@ -30,21 +30,26 @@ class FriendCurrentFragment : Fragment() {
     ): View {
         _binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_friend_currenct, container, false)
-        adapter=FriendAdapter(viewModel)
+        adapter = FriendAdapter(viewModel)
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.friendList.observe(viewLifecycleOwner){
-            adapter.updateList(InteractData.convertToList(it))
+        viewModel.friendList.observe(viewLifecycleOwner) {
+            adapter.submitList(it?.let { InteractData.convertToList(it) } ?: emptyList())
+            binding.progressBar.visibility = View.GONE
             binding.rcvCurrentFriend.let { rcv ->
                 rcv.layoutManager = LinearLayoutManager(requireContext())
                 rcv.adapter = adapter
             }
         }
         searchViewModel.searchQuery.observe(viewLifecycleOwner) {
+            if(it.isEmpty()){
+                adapter.submitList(viewModel.friendList.value)
+            }
+            else
             adapter.filter.filter(it)
         }
     }

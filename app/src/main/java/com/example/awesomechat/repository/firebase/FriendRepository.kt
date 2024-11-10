@@ -3,167 +3,152 @@ package com.example.awesomechat.repository.firebase
 import android.content.ContentValues.TAG
 import android.util.Log
 import com.example.awesomechat.interact.InteractFriend
-import com.example.awesomechat.interact.InteractMessage
 import com.example.awesomechat.model.Friend
 import com.example.awesomechat.model.User
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class FriendRepository @Inject constructor(private val auth: FirebaseAuth, private val db: FirebaseFirestore) : InteractFriend {
+class FriendRepository @Inject constructor(auth: FirebaseAuth, private val db: FirebaseFirestore) :
+    InteractFriend {
     override val emailCurrent: String = auth.currentUser?.email.toString()
-
-    override suspend fun getStateFriend(email: String, state: String): List<User> {
-        return withContext(Dispatchers.IO) {
-            val friendList: MutableList<User> = mutableListOf()
-            try {
-                val friendQuerySnapshot = db.collection("Friend").whereEqualTo("state", state)
-                    .where(
-                        Filter.or(
-                            Filter.equalTo("sideA", email),
-                            Filter.equalTo("sideB", email)
-                        )
-                    ).get().await()
-                if (friendQuerySnapshot.isEmpty) return@withContext friendList
-                val emailList: MutableList<String> = mutableListOf()
-                friendQuerySnapshot.documents.mapNotNull { document ->
-                    if (document.getString("sideB").equals(email)) {
-                        emailList.add(document.getString("sideA").toString())
-                    } else
-                        emailList.add(document.getString("sideB").toString())
-                }
-
-                for (it in emailList) {
-                    val informationQuerySnapshot =
-                        db.collection("User").whereEqualTo("email", it).get().await()
-                    if (informationQuerySnapshot.isEmpty) continue
-                    val user = informationQuerySnapshot.first().toObject(User::class.java)
-                    friendList.add(user)
-                }
-            } catch (exception: Exception) {
-                Log.w("firestore", "Error getting documents: ", exception)
+    override suspend fun getStateFriend(): Flow<List<User>> = callbackFlow {
+        val docRef = db.collection("Friend").whereEqualTo("state","friend").where(Filter.or(
+            Filter.equalTo("sideA", emailCurrent),
+            Filter.equalTo("sideB", emailCurrent)))
+        val listenerRegistration = docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                close(e)
+                return@addSnapshotListener
             }
-            return@withContext friendList
+            val emailList = snapshot?.documents?.mapNotNull {
+                if (it.getString("sideA").equals(emailCurrent))
+                        it.getString("sideB")
+                    else
+                        it.getString("sideA")
+                }
+            if (!emailList.isNullOrEmpty()) {
+                launch {
+                    val friendList = db.collection("User")
+                        .whereIn("email", emailList)
+                        .get()
+                        .await().mapNotNull { item -> item.toObject(User::class.java) }
+                    trySend(friendList).isSuccess
+                }
+            } else {
+                trySend(emptyList()).isFailure
+            }
         }
+        awaitClose { listenerRegistration.remove() }
     }
 
-    override suspend fun getRequestFriend(email: String, state: String): List<User> {
-        return withContext(Dispatchers.IO) {
-            val requestList: MutableList<User> = mutableListOf()
-            try {
-                val requestQuerySnapshot = db.collection("Friend").whereEqualTo("sideA", email)
-                    .whereEqualTo("state", state).get().await()
-                if (requestQuerySnapshot.isEmpty) return@withContext requestList
-                val emailList: List<String> =
-                    requestQuerySnapshot.documents.mapNotNull { document ->
-                        document.getString("sideB")
-                    }
-                for (it in emailList) {
-                    val informationQuerySnapshot =
-                        db.collection("User").whereEqualTo("email", it).get().await()
-                    if (informationQuerySnapshot.isEmpty) continue
-                    val user = informationQuerySnapshot.first().toObject(User::class.java)
-                    requestList.add(user)
-                }
-            } catch (exception: Exception) {
-                Log.w("firestore", "Error getting documents: ", exception)
+    override suspend fun getRequestFriend(): Flow<List<User>> = callbackFlow {
+        val docRef = db.collection("Friend").whereEqualTo("sideA", emailCurrent)
+            .whereEqualTo("state", "request")
+        val listenerRegistration = docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                close(e)
+                return@addSnapshotListener
             }
-            return@withContext requestList
+            val emailList = snapshot?.documents?.mapNotNull { it.getString("sideB") }
+            if (!emailList.isNullOrEmpty()) {
+                launch {
+                    val userQuerySnapshot = db.collection("User")
+                        .whereIn("email", emailList)
+                        .get()
+                        .await().mapNotNull { item -> item.toObject(User::class.java) }
+                    trySend(userQuerySnapshot).isSuccess
+                }
+            } else
+                trySend(emptyList()).isFailure
         }
+        awaitClose { listenerRegistration.remove() }
+        close()
     }
 
-    override suspend fun getInvitationFriend(email: String, state: String): List<User> {
-        return withContext(Dispatchers.IO) {
-            val invitationList: MutableList<User> = mutableListOf()
-            try {
-                val invitationQuerySnapshot = db.collection("Friend").whereEqualTo("sideB", email)
-                    .whereEqualTo("state", state).get().await()
-                if (invitationQuerySnapshot.isEmpty) return@withContext invitationList
-                val emailList: List<String> =
-                    invitationQuerySnapshot.documents.mapNotNull { document ->
-                        document.getString("sideA")
-                    }
-                for (it in emailList) {
-                    val informationQuerySnapshot =
-                        db.collection("User").whereEqualTo("email", it).get().await()
-                    if (informationQuerySnapshot.isEmpty) continue
-                    val user = informationQuerySnapshot.first().toObject(User::class.java)
-                    invitationList.add(user)
-                }
-            } catch (exception: Exception) {
-                Log.w("firestore", "Error getting documents: ", exception)
+    override suspend fun getInvitationFriend(): Flow<List<User>> = callbackFlow {
+        val docRef = db.collection("Friend").whereEqualTo("sideB", emailCurrent)
+            .whereEqualTo("state", "request")
+        val listenerRegistration = docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                close(e)
+                return@addSnapshotListener
             }
-            return@withContext invitationList
+            val emailList = snapshot?.documents?.mapNotNull { it.getString("sideA") }
+            if (!emailList.isNullOrEmpty()) {
+                launch {
+                    val userQuerySnapshot = db.collection("User")
+                        .whereIn("email", emailList)
+                        .get()
+                        .await().mapNotNull { item -> item.toObject(User::class.java) }
+                    trySend(userQuerySnapshot).isSuccess
+                }
+            } else
+                trySend(emptyList()).isSuccess
         }
+
+        awaitClose { listenerRegistration.remove() }
     }
 
-    override suspend fun getAllUser(email: String): MutableList<User> {
-        return withContext(Dispatchers.IO) {
-            var remainingFriendList: MutableList<User> = mutableListOf()
-            try {
-                val jobCurrentFriend = async {
-                    val result = getStateFriend(email, "friend")
-                    result.forEach { it.state = "friend" }
-                    return@async result
-                }
-                val jobRequestFriend = async {
-                    val result = getRequestFriend(email, "request")
-                    result.forEach { it.state = "request" }
-                    return@async result
-                }
-                val jobInvitation = async {
-                    val result = getInvitationFriend(email, "request")
-                    result.forEach { it.state = "invitation" }
-                    return@async result
-                }
-                val jobAllUser = async {
-                    val allUserList: MutableList<User> = mutableListOf()
-                    val queryAllEmail =
-                        db.collection("User").get().await()
-                    if (queryAllEmail.isEmpty) {
-                        null
-                    } else {
-                        val emailList: List<String> =
-                            queryAllEmail.documents.mapNotNull { document -> document.getString("email") }
-                        for (it in emailList) {
-                            val informationQuerySnapshot =
-                                db.collection("User").whereEqualTo("email", it).get().await()
-                            if (informationQuerySnapshot.isEmpty) continue
+    override suspend fun getRemainUser(): Flow<List<User>> = callbackFlow {
+        val docRef = db.collection("Friend")
+            .where(Filter.or(
+                    Filter.equalTo("sideA", emailCurrent),
+                    Filter.equalTo("sideB", emailCurrent)))
 
-                            val user = informationQuerySnapshot.first().toObject(User::class.java)
-                            allUserList.add(user)
+        val listenerRegistration = docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                close(e)
+                return@addSnapshotListener
+            }
+            var emailList = snapshot?.documents?.mapNotNull {
+                if (it.getString("sideA").equals(emailCurrent))
+                    it.getString("sideB")
+                else
+                    it.getString("sideA")
+            }
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val listenerUser =
+                        db.collection("User").addSnapshotListener { snapshotUser, eUser ->
+                            if (eUser != null) {
+                                close(eUser)
+                            }
+                            val user =
+                                snapshotUser?.documents?.mapNotNull { user -> user.toObject(User::class.java) }
+                            if (user.isNullOrEmpty()) {
+                                trySend(emptyList()).isSuccess
+                            } else {
+                                if (!emailList.isNullOrEmpty()) {
+                                    emailList = emailList!! + emailCurrent
+                                    val userNew = user.filter { it.email !in emailList!! }
+                                    trySend(userNew).isSuccess
+                                } else{
+                                    val userNew = user.filter { it.email !in emailCurrent }
+                                    trySend(userNew).isSuccess
+                                }
+                            }
                         }
-                        allUserList.removeIf { user -> user.email == email }
-                        return@async allUserList
-                    }
+                    awaitClose { listenerUser.remove() }
+                } catch (e: Exception) {
+                    Log.w("Firestore", "Error fetching messages", e)
                 }
-                val sumListHaveState =
-                    (jobRequestFriend.await() + jobCurrentFriend.await() + jobInvitation.await()).toMutableList()
-                val allUserList = jobAllUser.await()?.toMutableList()
-                val filterList = allUserList?.filter { user1 ->
-                    user1.email !in sumListHaveState.map { user2 -> user2.email }
-                }
-                filterList?.forEach { it.state = "none" }
-                if (filterList != null) {
-                    remainingFriendList =
-                        (filterList + jobCurrentFriend.await() + jobRequestFriend.await()).toMutableList()
-                }
-            } catch (exception: Exception) {
-                Log.w("firestore", "Error getting documents: ", exception)
             }
-            return@withContext remainingFriendList
         }
+        awaitClose { listenerRegistration.remove() }
     }
 
     override suspend fun sendRequestFriend(sideB: String) {
@@ -223,40 +208,23 @@ class FriendRepository @Inject constructor(private val auth: FirebaseAuth, priva
                 .whereEqualTo("sideB", sideB).get()
             document.addOnCompleteListener {
                 if (it.isSuccessful && !it.result.isEmpty) {
-                    val documentSnapshot = it.result.documents[0]
-                    val documentId = documentSnapshot.id
+                    val documentId = it.result.documents[0].id
+                    Log.w("documentID", documentId)
                     db.collection("Friend").document(documentId)
                         .delete()
                         .addOnSuccessListener {
-                            Log.d(
-                                TAG,
-                                "DocumentSnapshot successfully deleted!"
-                            )
+                            Log.d(TAG, "DocumentSnapshot successfully deleted!")
                         }
                         .addOnFailureListener { e -> Log.w(TAG, "Error deleting document", e) }
                 }
             }
         }
     }
-
-    override suspend fun getQuantityRequestFriend(): Int {
-        return try {
-            val documentSnapshot = db.collection("Friend")
-                .whereEqualTo("state", "request")
-                .whereEqualTo("sideB", emailCurrent)
-                .get()
-                .await()
-            documentSnapshot.size()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            0
-        }
-    }
 }
 
 @Module
 @InstallIn(ViewModelComponent::class)
-abstract class FriendModule{
+abstract class FriendModule {
     @Binds
     abstract fun bindInteractFriend(friendRepository: FriendRepository): InteractFriend
 }

@@ -3,11 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".view.FragmentLogin">
+
     <data>
+
         <variable
             name="viewmodel"
             type="com.example.awesomechat.viewmodel.LoginViewmodel" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -17,9 +20,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_fragment"
-            android:layout_marginTop="@dimen/marginTop_icon_login"
+            android:layout_marginTop="@dimen/margin_61dp"
             android:contentDescription="@string/icon_login"
             android:src="@drawable/icon_login"
+            app:layout_constraintBottom_toTopOf="@id/tv_sologan"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,106 +31,143 @@
             android:id="@+id/tv_sologan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_3dp"
+            android:layout_marginStart="25dp"
             android:fontFamily="@font/lato_light"
             android:text="@string/experience"
             android:textSize="25sp"
-            app:layout_constraintStart_toStartOf="@+id/imageView3"
+            app:layout_constraintBottom_toTopOf="@id/textView"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_11dp"
+            android:layout_marginStart="@dimen/margin_25dp"
             android:fontFamily="@font/lato_black"
             android:text="@string/sign_in"
             android:textColor="@color/primary_color"
             android:textSize="30sp"
-            app:layout_constraintStart_toStartOf="@+id/tv_sologan"
+            app:layout_constraintBottom_toTopOf="@id/tv_email"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_sologan" />
 
         <TextView
             android:id="@+id/tv_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_25dp"
             android:layout_marginTop="@dimen/margin_61dp"
             android:text="@string/email"
-            app:layout_constraintStart_toStartOf="@+id/textView"
+            app:layout_constraintBottom_toTopOf="@+id/edt_Email"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
 
         <EditText
             android:id="@+id/edt_Email"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_edittext"
-            android:text="@={viewmodel.email}"
-            android:inputType="textEmailAddress"
-            android:hint="@string/input_email"
+            android:layout_marginStart="@dimen/margin_25dp"
+            android:layout_marginEnd="@dimen/margin_25dp"
             android:autofillHints="emailAddress"
             android:drawableEnd="@drawable/icon_email"
-            android:layout_marginTop="@dimen/margin_7dp"
-            android:layout_marginStart="@dimen/margin_fragment"
-            android:layout_marginEnd="@dimen/margin_fragment"
-            app:layout_constraintTop_toBottomOf="@+id/tv_email" />
+            android:hint="@string/input_email"
+            android:inputType="textEmailAddress"
+            android:text="@={viewmodel.email}"
+            app:layout_constraintBottom_toTopOf="@id/tv_password"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_email" />
+
         <TextView
             android:id="@+id/tv_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_25dp"
             android:layout_marginTop="@dimen/margin_40dp"
             android:text="@string/password"
-            app:layout_constraintStart_toStartOf="@+id/edt_Email"
-            app:layout_constraintTop_toBottomOf="@+id/edt_Email" />
+            app:layout_constraintBottom_toTopOf="@id/edt_Password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edt_Email" />
 
         <EditText
             android:id="@+id/edt_Password"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_edittext"
+            android:layout_marginStart="@dimen/margin_25dp"
+            android:layout_marginTop="@dimen/margin_7dp"
+            android:layout_marginEnd="@dimen/margin_25dp"
+            android:autofillHints="password"
             android:drawableEnd="@drawable/icon_password"
             android:ems="10"
-            android:text="@={viewmodel.password}"
             android:hint="@string/input_password"
-            android:autofillHints="password"
             android:inputType="textPassword"
-            android:layout_marginStart="@dimen/margin_fragment"
-            android:layout_marginEnd="@dimen/margin_fragment"
-            android:layout_marginTop="@dimen/margin_7dp"
-            app:layout_constraintStart_toStartOf="@+id/tv_password"
+            android:text="@={viewmodel.password}"
+            app:layout_constraintBottom_toTopOf="@id/etd_forgot"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_password" />
 
         <TextView
             android:id="@+id/etd_forgot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/forgot_password"
+            android:layout_marginTop="@dimen/margin_12dp"
+            android:layout_marginEnd="@dimen/margin_25dp"
             android:fontFamily="@font/lato_black"
+            android:text="@string/forgot_password"
             android:textColor="@color/primary_color"
             android:textStyle="bold"
-            android:layout_marginTop="@dimen/margin_15dp"
-            app:layout_constraintEnd_toEndOf="@+id/edt_Password"
+            app:layout_constraintBottom_toTopOf="@id/btn_Login"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edt_Password" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <LinearLayout
             android:id="@+id/btn_Login"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/height_button"
-            android:onClick="@{() ->viewmodel.login()}"
-            android:text="@string/sign_in"
-            android:textColor="@color/white"
-            android:enabled="@{viewmodel.result}"
-            android:background="@{viewmodel.result ? @color/primary_color:@color/no_focus}"
+            android:layout_height="@dimen/margin_60dp"
+            android:layout_marginStart="@dimen/margin_25dp"
             android:layout_marginTop="@dimen/margin_47dp"
-            android:layout_marginStart="@dimen/margin_fragment"
-            android:layout_marginEnd="@dimen/margin_fragment"
-            app:layout_constraintTop_toBottomOf="@+id/etd_forgot" />
+            android:layout_marginEnd="@dimen/margin_25dp"
+            android:layout_marginBottom="180dp"
+            android:background="@drawable/background_chat_recipient"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etd_forgot">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/white"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_10dp"
+                android:fontFamily="@font/lato_black"
+                android:text="@string/signIn1"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_38dp"
+            android:layout_marginBottom="@dimen/margin_22dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/btn_Login"
-            app:layout_constraintStart_toStartOf="@+id/btn_Login">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -143,7 +184,7 @@
                 android:fontFamily="@font/lato_black"
                 android:text="@string/signupNow"
                 android:textColor="@color/primary_color"
-                android:textSize="@dimen/text_size15sp"/>
+                android:textSize="@dimen/text_size15sp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

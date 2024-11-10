@@ -35,8 +35,8 @@ class FragmentFriend : Fragment() {
         binding.viewPagerFriend.offscreenPageLimit = 3
         TabLayoutMediator(binding.tabLayoutFriend, binding.viewPagerFriend) { tab, positions ->
             when(positions){
-                0->tab.text="Bạn bè"
-                1 ->tab.text= "Tất cả"
+                0->tab.setText(R.string.friend)
+                1 ->tab.setText(R.string.all)
                 2 ->tab.text= "Yêu cầu"
             }
         }.attach()
@@ -60,6 +60,11 @@ class FragmentFriend : Fragment() {
                 notificationLayout.visibility = View.VISIBLE
             }
         }
+
+    }
+
+    override fun onStart() {
+        super.onStart()
         binding.searchFriend.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false

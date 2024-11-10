@@ -3,20 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".view.FragmentFriend">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background_root">
+
         <TextView
             android:id="@+id/tv_Friend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_12dp"
+            android:layout_marginTop="@dimen/margin_10dp"
+            android:fontFamily="@font/lato_black"
             android:text="@string/friend"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size30sp"
-            android:fontFamily="@font/lato_black"
-            android:layout_marginTop="@dimen/margin_10dp"
-            android:layout_marginStart="@dimen/margin_12dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,22 +26,23 @@
             android:id="@+id/search_Friend"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_edittext"
-            android:queryHint="@string/search_friend"
-            android:inputType="text"
-            android:iconifiedByDefault="false"
-            android:background="@drawable/custom_search"
             android:layout_marginStart="@dimen/margin_12dp"
             android:layout_marginTop="@dimen/margin_22dp"
             android:layout_marginEnd="@dimen/margin_12dp"
+            android:background="@drawable/custom_search"
+            android:iconifiedByDefault="false"
+            android:inputType="text"
+            android:queryHint="@string/search_friend"
             app:layout_constraintTop_toBottomOf="@+id/tv_Friend" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@drawable/background_block"
             android:layout_marginTop="@dimen/margin_22dp"
+            android:background="@drawable/background_block"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_Friend">
+
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayout_Friend"
                 android:layout_width="match_parent"
@@ -49,6 +52,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tabIndicatorAnimationMode="elastic" />
+
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPagerFriend"
                 android:layout_width="match_parent"

@@ -17,9 +17,10 @@ import javax.inject.Singleton
 class AuthenticationRepository @Inject constructor(
     val auth: FirebaseAuth,
     private val db: FirebaseFirestore,
-    private val userCurrent: MutableLiveData<FirebaseUser>
+    private val userCurrent: MutableLiveData<FirebaseUser>,
+    override val emailCurrent: String
 ) : InteractAuthentication {
-    override val emailCurrent: String = auth.currentUser?.email.toString()
+
     override fun checkUserCurrent(): Boolean {
         if (auth.currentUser != null) {
             userCurrent.postValue(auth.currentUser)
@@ -42,6 +43,7 @@ class AuthenticationRepository @Inject constructor(
                 callBack(false)
         }
     }
+
     override fun login(email: String, password: String, callBack: (Boolean) -> Unit) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
@@ -51,15 +53,23 @@ class AuthenticationRepository @Inject constructor(
                 callBack(false)
         }
     }
+
     override fun signOut() {
         auth.signOut()
     }
+
     override fun addUser(name: String, email: String) {
-        val user = User(name, email)
         db.collection("User")
-            .add(user)
+            .add(
+                User(
+                    name = name,
+                    email = email,
+                    url = "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                )
+            )
     }
 }
+
 @Module
 @InstallIn(ViewModelComponent::class)
 abstract class AuthenticationModule {

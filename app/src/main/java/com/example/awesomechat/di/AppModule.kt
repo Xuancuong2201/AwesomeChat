@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import com.example.awesomechat.adapter.RecipientMessageAdapter
+import com.example.awesomechat.model.Messages
 import com.example.awesomechat.model.User
 import com.example.awesomechat.util.DataStoreManager
+import com.example.awesomechat.view.FragmentDetailsMessageArgs
 import com.example.awesomechat.viewmodel.CreateMessViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -37,10 +39,16 @@ object AppModule {
     fun userCurrent(auth: FirebaseAuth):MutableLiveData<FirebaseUser>{
         return MutableLiveData<FirebaseUser>(auth.currentUser)
     }
+
+    @Provides
+    fun provideEmail(auth: FirebaseAuth):String{
+        return auth.currentUser?.email.toString()
+    }
     @Provides
     fun provideStorage() : StorageReference{
         return FirebaseStorage.getInstance().getReference("Images")
     }
+
 
 
 
