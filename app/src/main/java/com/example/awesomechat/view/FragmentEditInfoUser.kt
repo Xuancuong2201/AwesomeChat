@@ -7,12 +7,10 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.awesomechat.R
@@ -24,23 +22,21 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class FragmentEdit_Infor_User : Fragment() {
-    private var _binding: FragmentEditInforUserBinding? = null
-    private val viewModel: EditViewModel by activityViewModels()
+class FragmentEditInfoUser : Fragment() {
+    private lateinit var binding: FragmentEditInforUserBinding
     private lateinit var controller: NavController
-    private val binding get() = _binding!!
     private lateinit var launcher: ActivityResultLauncher<Intent>
+    private val viewModel: EditViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_edit_infor_user, container, false)
+        binding =
+            FragmentEditInforUserBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewmodel = viewModel
         controller = findNavController()
         openGallery()
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_UNSPECIFIED);
         return binding.root
     }
 

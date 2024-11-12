@@ -1,6 +1,5 @@
 package com.example.awesomechat.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,23 +12,25 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.awesomechat.R
 import com.example.awesomechat.databinding.ItemFriendBinding
 import com.example.awesomechat.databinding.ItemHeaderBinding
+import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.interact.InteractData
 import com.example.awesomechat.model.User
 import com.example.awesomechat.viewmodel.FriendViewModel
 
 class FriendAdapter(val viewmodel: FriendViewModel) :
-    ListAdapter<Any, RecyclerView.ViewHolder>(FriendDiffCallback()),Filterable {
+    ListAdapter<Any, RecyclerView.ViewHolder>(FriendDiffCallback()), Filterable {
+    private var originalList: List<Any> = emptyList()
+
     class ItemUser(
         private val itemBinding: ItemFriendBinding,
-        private val viewmodel: FriendViewModel,
-        private val adapter: FriendAdapter
+        private val viewmodel: FriendViewModel
     ) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(item: User) {
             itemBinding.user = item
             when (item.state) {
-                "friend" ->itemBinding.btSelect.visibility = View.GONE
-                "request" -> itemBinding.btSelect.apply {
-                    text = "Hủy"
+                InfoFieldQuery.STATE_FRIEND -> itemBinding.btSelect.visibility = View.GONE
+                InfoFieldQuery.STATE_REQUEST -> itemBinding.btSelect.apply {
+                    text = context.getString(R.string.cancel)
                     setTextColor(
                         ContextCompat.getColor(
                             itemBinding.root.context,
@@ -42,16 +43,16 @@ class FriendAdapter(val viewmodel: FriendViewModel) :
                     }
                 }
 
-                "user" -> {
+                InfoFieldQuery.STATE_USER -> {
                     itemBinding.btSelect.apply {
-                        text = "Kết bạn"
+                        text = context.getString(R.string.add)
                         setOnClickListener {
                             viewmodel.sendRequestFriend(item.email)
                         }
                     }
                 }
 
-                "invitation" -> {
+                InfoFieldQuery.STATE_INVITATION -> {
                     itemBinding.btDelete.setOnClickListener {
                         viewmodel.refuseInvitationFriend(item.email)
                     }
@@ -77,7 +78,7 @@ class FriendAdapter(val viewmodel: FriendViewModel) :
                     LayoutInflater.from(parent.context),
                     parent,
                     false
-                ), viewmodel, this
+                ), viewmodel
             )
 
             InteractData.TYPE_HEADER -> ItemHeader(
@@ -91,6 +92,7 @@ class FriendAdapter(val viewmodel: FriendViewModel) :
             else -> throw IllegalArgumentException("Invalid ViewType")
         }
     }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ItemHeader -> holder.bind(getItem(position) as Char)
@@ -112,10 +114,10 @@ class FriendAdapter(val viewmodel: FriendViewModel) :
                 val results = FilterResults()
                 val filteredList: MutableList<Any> = mutableListOf()
                 if (constraint.isNullOrEmpty()) {
-                    filteredList.addAll(currentList)
+                    filteredList.addAll(originalList)
                 } else {
                     val filterPattern = constraint.toString().lowercase().trim()
-                    for (it in currentList) {
+                    for (it in originalList) {
                         if (it is User && it.name.lowercase().contains(filterPattern)) {
                             filteredList.add(it)
                         }
@@ -124,15 +126,22 @@ class FriendAdapter(val viewmodel: FriendViewModel) :
                 results.values = filteredList
                 return results
             }
+
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                val filteredUsers = (results?.values as? List<User>) ?: emptyList()
-                updateListFilter(filteredUsers)
+                val values = results?.values
+                if (values is List<*>) {
+                    val filteredFriend = values.filterIsInstance<User>()
+                    submitList(filteredFriend)
+                }
             }
         }
     }
-    fun updateListFilter(filteredUsers: List<User>) {
-        submitList(filteredUsers)
+
+    fun setItems(list: List<Any>) {
+        originalList = list
+        submitList(list)
     }
+
     class FriendDiffCallback : DiffUtil.ItemCallback<Any>() {
         override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
             return when {

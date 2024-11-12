@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.awesomechat.R
 import com.example.awesomechat.adapter.FriendAdapter
 import com.example.awesomechat.databinding.FragmentFriendCurrenctBinding
 import com.example.awesomechat.interact.InteractData
@@ -18,27 +17,25 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FriendCurrentFragment : Fragment() {
-    private var _binding: FragmentFriendCurrenctBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentFriendCurrenctBinding
     private lateinit var adapter: FriendAdapter
-    private val viewModel: FriendViewModel by activityViewModels()
-    private val searchViewModel: SearchViewModel by activityViewModels()
+    private val viewModel: FriendViewModel by viewModels<FriendViewModel>()
+    private val searchViewModel: SearchViewModel by activityViewModels<SearchViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_friend_currenct, container, false)
-        adapter = FriendAdapter(viewModel)
+        binding = FragmentFriendCurrenctBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
+        adapter = FriendAdapter(viewModel)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.friendList.observe(viewLifecycleOwner) {
-            adapter.submitList(it?.let { InteractData.convertToList(it) } ?: emptyList())
+            adapter.setItems(it?.let { InteractData.convertToList(it) } ?: emptyList())
             binding.progressBar.visibility = View.GONE
             binding.rcvCurrentFriend.let { rcv ->
                 rcv.layoutManager = LinearLayoutManager(requireContext())
@@ -46,10 +43,6 @@ class FriendCurrentFragment : Fragment() {
             }
         }
         searchViewModel.searchQuery.observe(viewLifecycleOwner) {
-            if(it.isEmpty()){
-                adapter.submitList(viewModel.friendList.value)
-            }
-            else
             adapter.filter.filter(it)
         }
     }

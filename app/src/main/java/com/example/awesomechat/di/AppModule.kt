@@ -1,14 +1,15 @@
 package com.example.awesomechat.di
 
-import android.content.Context
+
 import androidx.lifecycle.MutableLiveData
-import androidx.navigation.NavController
-import com.example.awesomechat.adapter.RecipientMessageAdapter
-import com.example.awesomechat.model.Messages
-import com.example.awesomechat.model.User
-import com.example.awesomechat.util.DataStoreManager
-import com.example.awesomechat.view.FragmentDetailsMessageArgs
-import com.example.awesomechat.viewmodel.CreateMessViewModel
+import com.example.awesomechat.interact.InteractAuthentication
+import com.example.awesomechat.interact.InteractFriend
+import com.example.awesomechat.interact.InteractMessage
+import com.example.awesomechat.interact.InteractUser
+import com.example.awesomechat.repository.firebase.AuthenticationRepository
+import com.example.awesomechat.repository.firebase.FriendRepository
+import com.example.awesomechat.repository.firebase.MessageRepository
+import com.example.awesomechat.repository.firebase.UserRepository
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -16,13 +17,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.runBlocking
-import javax.inject.Named
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -49,20 +50,20 @@ object AppModule {
         return FirebaseStorage.getInstance().getReference("Images")
     }
 
+}
+@Module
+@InstallIn(ViewModelComponent::class)
+abstract class RepositoryModule {
 
+    @Binds
+    abstract fun bindInteractFriend(friendRepository: FriendRepository): InteractFriend
 
+    @Binds
+    abstract fun bindInteractAuthentication(authenticationRepository: AuthenticationRepository): InteractAuthentication
 
+    @Binds
+    abstract fun bindInteractMessage(messageRepository: MessageRepository): InteractMessage
 
-
-
-
-
-
-
-
-
-
-
-
-
+    @Binds
+    abstract fun bindInteractUser(userRepository: UserRepository): InteractUser
 }

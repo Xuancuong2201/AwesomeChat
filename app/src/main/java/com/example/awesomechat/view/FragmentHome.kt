@@ -14,30 +14,28 @@ import com.example.awesomechat.databinding.FragmentHomeBinding
 
 
 class FragmentHome : Fragment() {
-    private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding!!
-    private lateinit var navHostFragment : NavHostFragment
-
+    private lateinit var binding: FragmentHomeBinding
+    private lateinit var navHostFragment: NavHostFragment
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        binding = FragmentHomeBinding.inflate(inflater)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navHostFragment = childFragmentManager.findFragmentById(R.id.fragment_home) as NavHostFragment
-        NavigationUI.setupWithNavController( binding.bottomNav, navHostFragment.navController)
+        navHostFragment =
+            childFragmentManager.findFragmentById(R.id.fragment_home) as NavHostFragment
+        NavigationUI.setupWithNavController(binding.bottomNav, navHostFragment.navController)
         binding.cardview.viewTreeObserver.addOnGlobalLayoutListener {
             val insets = ViewCompat.getRootWindowInsets(view)
             val imeVisible = insets?.isVisible(WindowInsetsCompat.Type.ime())
-            if(imeVisible!= null && imeVisible==true)
-               binding.cardview.visibility=View.GONE
+            if (imeVisible != null && imeVisible == true)
+                binding.cardview.visibility = View.GONE
             else
-                binding.cardview.visibility=View.VISIBLE
+                binding.cardview.visibility = View.VISIBLE
         }
     }
 }

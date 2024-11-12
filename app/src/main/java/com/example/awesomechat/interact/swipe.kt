@@ -3,11 +3,10 @@ package com.example.awesomechat.interact
 import android.content.Context
 import android.graphics.Canvas
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_IDLE
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
 import androidx.recyclerview.widget.RecyclerView
 
-class Swipe(private val context: Context) : ItemTouchHelper.Callback() {
+class Swipe( context: Context) : ItemTouchHelper.Callback() {
     private val limitScrollX= dipToPx(85f,context)
     private var currentScrollX=0
     private var currentScrollXWhenInActive =0

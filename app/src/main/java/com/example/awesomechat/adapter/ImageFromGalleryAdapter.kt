@@ -35,19 +35,21 @@ class ImageFromGalleryAdapter(private val imageClickInterface: ImageClickInterfa
                 imageClickInterface.selectImage(bindingAdapterPosition, uri)
             }
         }
-    }
 
-    class ImageDiffUtil : DiffUtil.ItemCallback<String>() {
-        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
-            return newItem == oldItem
-        }
 
-        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
-            return areItemsTheSame(oldItem, newItem)
-        }
     }
 
     interface ImageClickInterface {
         fun selectImage(position: Int, uri: String)
+    }
+}
+
+class ImageDiffUtil : DiffUtil.ItemCallback<String>() {
+    override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
+        return newItem == oldItem
+    }
+
+    override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
+        return areItemsTheSame(oldItem, newItem)
     }
 }

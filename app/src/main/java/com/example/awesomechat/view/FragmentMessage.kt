@@ -5,9 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,20 +20,20 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FragmentMessage : Fragment() {
-    private var _binding: FragmentMessageBinding? = null
-    private val binding get() = _binding!!
-    private val  viewModel: ChatViewModel by activityViewModels()
+    private lateinit var binding: FragmentMessageBinding
     private lateinit var adapter: MessagesAdapter
     private lateinit var controller: NavController
+    private val viewModel: ChatViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_message, container, false)
+        binding = FragmentMessageBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
         controller = (activity as MainActivity).findNavController(R.id.fragment)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter = MessagesAdapter(object : MessagesAdapter.ItemClickListener {
@@ -47,8 +46,8 @@ class FragmentMessage : Fragment() {
         })
 
         viewModel.messageList.observe(viewLifecycleOwner) {
-            binding.progressBar.visibility=View.GONE
-            adapter.updateList(it)
+            binding.progressBar.visibility = View.GONE
+            adapter.setItems(it)
         }
 
         binding.rcvMessage.let { rcv ->
@@ -61,12 +60,12 @@ class FragmentMessage : Fragment() {
         }
 
 
-
-
     }
+
     override fun onStart() {
         super.onStart()
-        binding.searchMessage.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
+        binding.searchMessage.setOnQueryTextListener(object :
+            android.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = false
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let { adapter.filter.filter(it) }

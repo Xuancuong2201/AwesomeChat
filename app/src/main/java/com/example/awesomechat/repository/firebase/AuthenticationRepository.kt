@@ -1,15 +1,13 @@
 package com.example.awesomechat.repository.firebase
 
 import androidx.lifecycle.MutableLiveData
+import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.interact.InteractAuthentication
 import com.example.awesomechat.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
+
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -59,23 +57,18 @@ class AuthenticationRepository @Inject constructor(
     }
 
     override fun addUser(name: String, email: String) {
-        db.collection("User")
+        db.collection(InfoFieldQuery.COLLECTION_USER)
             .add(
                 User(
                     name = name,
                     email = email,
-                    url = "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                    url = InfoFieldQuery.URL_DEFAULT
                 )
             )
     }
 }
 
-@Module
-@InstallIn(ViewModelComponent::class)
-abstract class AuthenticationModule {
-    @Binds
-    abstract fun bindInteractAuthentication(authenticationRepository: AuthenticationRepository): InteractAuthentication
-}
+
 
 
 

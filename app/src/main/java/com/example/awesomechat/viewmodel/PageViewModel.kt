@@ -12,7 +12,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class PageViewModel @Inject constructor(
     private val interact: InteractAuthentication,
@@ -21,8 +20,6 @@ class PageViewModel @Inject constructor(
     val currentUserEmail by lazy { MutableLiveData<String>(interact.emailCurrent) }
     val name by lazy { MutableLiveData<String>() }
     val url by lazy { MutableLiveData<String>() }
-    val language by lazy { MutableLiveData<String>() }
-
     init {
         viewModelScope.launch {
             val result = async { DataStoreManager.getSavedInformationUser(context) }.await()
@@ -38,9 +35,7 @@ class PageViewModel @Inject constructor(
             name.postValue(result.name)
             currentUserEmail.postValue(result.email)
         }
-
     }
-
     fun logOut() {
         interact.signOut()
     }

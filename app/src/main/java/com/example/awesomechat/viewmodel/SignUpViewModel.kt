@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val interact: InteractAuthentication,
-    val interactUser: InteractUser,
+    private val interactUser: InteractUser,
     @ApplicationContext val context: Context
 ) : ViewModel() {
     val account by lazy { MutableLiveData<String>() }

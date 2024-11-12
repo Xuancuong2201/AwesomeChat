@@ -2,16 +2,14 @@ package com.example.awesomechat.repository.firebase
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.interact.InteractFriend
 import com.example.awesomechat.model.Friend
 import com.example.awesomechat.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -26,27 +24,28 @@ class FriendRepository @Inject constructor(auth: FirebaseAuth, private val db: F
     InteractFriend {
     override val emailCurrent: String = auth.currentUser?.email.toString()
     override suspend fun getStateFriend(): Flow<List<User>> = callbackFlow {
-        val docRef = db.collection("Friend").whereEqualTo("state","friend").where(Filter.or(
-            Filter.equalTo("sideA", emailCurrent),
-            Filter.equalTo("sideB", emailCurrent)))
+        val docRef = db.collection(InfoFieldQuery.COLLECTION_FRIEND).whereEqualTo(InfoFieldQuery.KEY_STATE,InfoFieldQuery.KEY_FRIEND).where(Filter.or(
+            Filter.equalTo(InfoFieldQuery.KEY_SIDE_A, emailCurrent),
+            Filter.equalTo(InfoFieldQuery.KEY_SIDE_B, emailCurrent)))
         val listenerRegistration = docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
                 close(e)
                 return@addSnapshotListener
             }
             val emailList = snapshot?.documents?.mapNotNull {
-                if (it.getString("sideA").equals(emailCurrent))
-                        it.getString("sideB")
+                if (it.getString(InfoFieldQuery.KEY_SIDE_A).equals(emailCurrent))
+                        it.getString(InfoFieldQuery.KEY_SIDE_B)
                     else
-                        it.getString("sideA")
+                        it.getString(InfoFieldQuery.KEY_SIDE_A)
                 }
             if (!emailList.isNullOrEmpty()) {
                 launch {
-                    val friendList = db.collection("User")
-                        .whereIn("email", emailList)
+                    val friendList = db.collection(InfoFieldQuery.COLLECTION_USER)
+                        .whereIn(InfoFieldQuery.KEY_EMAIL, emailList)
                         .get()
                         .await().mapNotNull { item -> item.toObject(User::class.java) }
                     trySend(friendList).isSuccess
+
                 }
             } else {
                 trySend(emptyList()).isFailure
@@ -54,20 +53,19 @@ class FriendRepository @Inject constructor(auth: FirebaseAuth, private val db: F
         }
         awaitClose { listenerRegistration.remove() }
     }
-
     override suspend fun getRequestFriend(): Flow<List<User>> = callbackFlow {
-        val docRef = db.collection("Friend").whereEqualTo("sideA", emailCurrent)
-            .whereEqualTo("state", "request")
+        val docRef = db.collection(InfoFieldQuery.COLLECTION_FRIEND).whereEqualTo(InfoFieldQuery.KEY_SIDE_A, emailCurrent)
+            .whereEqualTo(InfoFieldQuery.KEY_STATE, InfoFieldQuery.STATE_REQUEST)
         val listenerRegistration = docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
                 close(e)
                 return@addSnapshotListener
             }
-            val emailList = snapshot?.documents?.mapNotNull { it.getString("sideB") }
+            val emailList = snapshot?.documents?.mapNotNull { it.getString(InfoFieldQuery.KEY_SIDE_B) }
             if (!emailList.isNullOrEmpty()) {
                 launch {
-                    val userQuerySnapshot = db.collection("User")
-                        .whereIn("email", emailList)
+                    val userQuerySnapshot = db.collection(InfoFieldQuery.COLLECTION_USER)
+                        .whereIn(InfoFieldQuery.KEY_EMAIL, emailList)
                         .get()
                         .await().mapNotNull { item -> item.toObject(User::class.java) }
                     trySend(userQuerySnapshot).isSuccess
@@ -80,18 +78,18 @@ class FriendRepository @Inject constructor(auth: FirebaseAuth, private val db: F
     }
 
     override suspend fun getInvitationFriend(): Flow<List<User>> = callbackFlow {
-        val docRef = db.collection("Friend").whereEqualTo("sideB", emailCurrent)
-            .whereEqualTo("state", "request")
+        val docRef = db.collection(InfoFieldQuery.COLLECTION_FRIEND).whereEqualTo(InfoFieldQuery.KEY_SIDE_B, emailCurrent)
+            .whereEqualTo(InfoFieldQuery.KEY_STATE, InfoFieldQuery.STATE_REQUEST)
         val listenerRegistration = docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
                 close(e)
                 return@addSnapshotListener
             }
-            val emailList = snapshot?.documents?.mapNotNull { it.getString("sideA") }
+            val emailList = snapshot?.documents?.mapNotNull { it.getString(InfoFieldQuery.KEY_SIDE_A) }
             if (!emailList.isNullOrEmpty()) {
                 launch {
-                    val userQuerySnapshot = db.collection("User")
-                        .whereIn("email", emailList)
+                    val userQuerySnapshot = db.collection(InfoFieldQuery.COLLECTION_USER)
+                        .whereIn(InfoFieldQuery.KEY_EMAIL, emailList)
                         .get()
                         .await().mapNotNull { item -> item.toObject(User::class.java) }
                     trySend(userQuerySnapshot).isSuccess
@@ -104,10 +102,10 @@ class FriendRepository @Inject constructor(auth: FirebaseAuth, private val db: F
     }
 
     override suspend fun getRemainUser(): Flow<List<User>> = callbackFlow {
-        val docRef = db.collection("Friend")
+        val docRef = db.collection(InfoFieldQuery.COLLECTION_FRIEND)
             .where(Filter.or(
-                    Filter.equalTo("sideA", emailCurrent),
-                    Filter.equalTo("sideB", emailCurrent)))
+                    Filter.equalTo(InfoFieldQuery.KEY_SIDE_A, emailCurrent),
+                    Filter.equalTo(InfoFieldQuery.KEY_SIDE_B, emailCurrent)))
 
         val listenerRegistration = docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -115,15 +113,15 @@ class FriendRepository @Inject constructor(auth: FirebaseAuth, private val db: F
                 return@addSnapshotListener
             }
             var emailList = snapshot?.documents?.mapNotNull {
-                if (it.getString("sideA").equals(emailCurrent))
-                    it.getString("sideB")
+                if (it.getString(InfoFieldQuery.KEY_SIDE_A).equals(emailCurrent))
+                    it.getString(InfoFieldQuery.KEY_SIDE_B)
                 else
-                    it.getString("sideA")
+                    it.getString(InfoFieldQuery.KEY_SIDE_A)
             }
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val listenerUser =
-                        db.collection("User").addSnapshotListener { snapshotUser, eUser ->
+                        db.collection(InfoFieldQuery.COLLECTION_USER).addSnapshotListener { snapshotUser, eUser ->
                             if (eUser != null) {
                                 close(eUser)
                             }
@@ -144,7 +142,7 @@ class FriendRepository @Inject constructor(auth: FirebaseAuth, private val db: F
                         }
                     awaitClose { listenerUser.remove() }
                 } catch (e: Exception) {
-                    Log.w("Firestore", "Error fetching messages", e)
+                    Log.w("Error", "Error fetching messages", e)
                 }
             }
         }
@@ -153,22 +151,22 @@ class FriendRepository @Inject constructor(auth: FirebaseAuth, private val db: F
 
     override suspend fun sendRequestFriend(sideB: String) {
         return withContext(Dispatchers.IO) {
-            val friend = Friend(emailCurrent, "request", sideB)
-            db.collection("Friend")
+            val friend = Friend(emailCurrent, InfoFieldQuery.STATE_REQUEST, sideB)
+            db.collection(InfoFieldQuery.COLLECTION_FRIEND)
                 .add(friend)
         }
     }
 
     override suspend fun refuseInvitationFriend(sideA: String) {
-        val document = db.collection("Friend")
-            .whereEqualTo("sideA", sideA)
-            .whereEqualTo("state", "request")
-            .whereEqualTo("sideB", emailCurrent).get()
+        val document = db.collection(InfoFieldQuery.COLLECTION_FRIEND)
+            .whereEqualTo(InfoFieldQuery.KEY_SIDE_A, sideA)
+            .whereEqualTo(InfoFieldQuery.KEY_STATE, InfoFieldQuery.STATE_REQUEST)
+            .whereEqualTo(InfoFieldQuery.KEY_SIDE_B, emailCurrent).get()
         document.addOnCompleteListener {
             if (it.isSuccessful && !it.result.isEmpty) {
                 val documentSnapshot = it.result.documents[0]
                 val documentId = documentSnapshot.id
-                db.collection("Friend").document(documentId)
+                db.collection(InfoFieldQuery.COLLECTION_FRIEND).document(documentId)
                     .delete()
                     .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully deleted!") }
                     .addOnFailureListener { e -> Log.w(TAG, "Error deleting document", e) }
@@ -178,16 +176,16 @@ class FriendRepository @Inject constructor(auth: FirebaseAuth, private val db: F
 
     override suspend fun acceptInvitationFriend(sideA: String) {
         return withContext(Dispatchers.IO) {
-            val document = db.collection("Friend")
-                .whereEqualTo("sideA", sideA)
-                .whereEqualTo("state", "request")
-                .whereEqualTo("sideB", emailCurrent).get()
+            val document = db.collection(InfoFieldQuery.COLLECTION_FRIEND)
+                .whereEqualTo(InfoFieldQuery.KEY_SIDE_A, sideA)
+                .whereEqualTo(InfoFieldQuery.KEY_STATE, InfoFieldQuery.STATE_REQUEST)
+                .whereEqualTo(InfoFieldQuery.KEY_SIDE_B, emailCurrent).get()
             document.addOnCompleteListener {
                 if (it.isSuccessful && !it.result.isEmpty) {
                     val documentSnapshot = it.result.documents[0]
                     val documentId = documentSnapshot.id
-                    db.collection("Friend").document(documentId)
-                        .update("state", "friend")
+                    db.collection(InfoFieldQuery.COLLECTION_FRIEND).document(documentId)
+                        .update(InfoFieldQuery.KEY_STATE, InfoFieldQuery.KEY_FRIEND)
                         .addOnSuccessListener {
                             Log.d(
                                 TAG,
@@ -202,15 +200,14 @@ class FriendRepository @Inject constructor(auth: FirebaseAuth, private val db: F
 
     override suspend fun cancelRequestFriend(sideB: String) {
         return withContext(Dispatchers.IO) {
-            val document = db.collection("Friend")
-                .whereEqualTo("sideA", emailCurrent)
-                .whereEqualTo("state", "request")
-                .whereEqualTo("sideB", sideB).get()
+            val document = db.collection(InfoFieldQuery.COLLECTION_FRIEND)
+                .whereEqualTo(InfoFieldQuery.KEY_SIDE_A, emailCurrent)
+                .whereEqualTo(InfoFieldQuery.KEY_STATE, InfoFieldQuery.STATE_REQUEST)
+                .whereEqualTo(InfoFieldQuery.KEY_SIDE_B, sideB).get()
             document.addOnCompleteListener {
                 if (it.isSuccessful && !it.result.isEmpty) {
                     val documentId = it.result.documents[0].id
-                    Log.w("documentID", documentId)
-                    db.collection("Friend").document(documentId)
+                    db.collection(InfoFieldQuery.COLLECTION_FRIEND).document(documentId)
                         .delete()
                         .addOnSuccessListener {
                             Log.d(TAG, "DocumentSnapshot successfully deleted!")
@@ -220,11 +217,4 @@ class FriendRepository @Inject constructor(auth: FirebaseAuth, private val db: F
             }
         }
     }
-}
-
-@Module
-@InstallIn(ViewModelComponent::class)
-abstract class FriendModule {
-    @Binds
-    abstract fun bindInteractFriend(friendRepository: FriendRepository): InteractFriend
 }

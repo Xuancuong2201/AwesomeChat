@@ -1,7 +1,6 @@
 package com.example.awesomechat.interact
 
 
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -50,7 +49,7 @@ class InteractData {
 
         fun isValidDateFormat(date: String): Boolean {
             return try {
-                val format: String = "dd/MM/yyyy"
+                val format = "dd/MM/yyyy"
                 val sdf = SimpleDateFormat(format, Locale.getDefault())
                 sdf.isLenient = false
                 sdf.parse(date)
@@ -95,10 +94,10 @@ class InteractData {
 
 @BindingAdapter("getFontFamily")
 fun getFortFamily(view: TextView, status: Boolean): String {
-    if (status)
-        return "@font/light"
+    return if (status)
+        "@font/light"
     else
-        return "@font/lato_black"
+        "@font/lato_black"
 }
 
 @BindingAdapter("showDate")

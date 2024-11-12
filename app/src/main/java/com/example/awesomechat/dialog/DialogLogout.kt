@@ -11,15 +11,14 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.example.awesomechat.R
 import com.example.awesomechat.view.MainActivity
-import com.example.awesomechat.viewmodel.PageViewModel
 
-class DialogLogout(private val viewModel: PageViewModel) : DialogFragment() {
+class DialogLogout(private val callBack: (Boolean) -> Unit) : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(getString(R.string.notification))
             .setMessage(getString(R.string.question_confirm))
             .setPositiveButton("OK") { dialog, _ ->
-                viewModel.logOut()
+                callBack(true)
                 dialog?.dismiss()
                 startActivity(Intent(requireActivity(), MainActivity::class.java))
             }
@@ -43,8 +42,8 @@ class DialogLogout(private val viewModel: PageViewModel) : DialogFragment() {
     }
 
     companion object {
-        fun newInstance(viewModel: PageViewModel): DialogLogout {
-            return DialogLogout(viewModel)
+        fun newInstance(callBack: (Boolean) -> Unit): DialogLogout {
+            return DialogLogout(callBack)
         }
     }
 }

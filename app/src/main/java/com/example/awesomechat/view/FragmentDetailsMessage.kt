@@ -8,23 +8,20 @@ import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.awesomechat.R
 import com.example.awesomechat.adapter.DetailsMessageAdapter
 import com.example.awesomechat.adapter.ImageFromGalleryAdapter
 import com.example.awesomechat.databinding.FragmentDetailsMessageBinding
@@ -35,24 +32,22 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInterface {
-    private val args: FragmentDetailsMessageArgs by navArgs()
-    private val viewModel: DetailsMessageViewModel by activityViewModels()
-    private var _binding: FragmentDetailsMessageBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentDetailsMessageBinding
     private lateinit var detailsMessageAdapter: DetailsMessageAdapter
     private lateinit var imageFromGalleryAdapter: ImageFromGalleryAdapter
     private lateinit var controller: NavController
+    private val args: FragmentDetailsMessageArgs by navArgs()
+    private val viewModel: DetailsMessageViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_details_message, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewmodel = viewModel
         detailsMessageAdapter = DetailsMessageAdapter(viewModel)
         imageFromGalleryAdapter = ImageFromGalleryAdapter(this)
-        imageFromGalleryAdapter.submitList(getListImageFromGallery())
+        binding = FragmentDetailsMessageBinding.inflate(inflater)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewmodel = viewModel
         viewModel.getDetailsMessage(args.message.email.toString())
         return binding.root
     }
@@ -88,13 +83,14 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
         }
 
         viewModel.listDetailsMessage.observe(viewLifecycleOwner) {
-            if(it.isNotEmpty()){
-                detailsMessageAdapter.updateList(adjustList(it))
+            if (it.isNotEmpty()) {
+                detailsMessageAdapter.submitList(adjustList(it))
                 binding.rcvDetailsMessage.let { rcv ->
                     rcv.layoutManager = LinearLayoutManager(requireContext())
                     rcv.adapter = detailsMessageAdapter
-                    rcv.scrollToPosition(it.size - 1)
+                    rcv.scrollToPosition(detailsMessageAdapter.itemCount - 1)
                 }
+
             }
         }
 
@@ -196,6 +192,5 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
     override fun selectImage(position: Int, uri: String) {
         viewModel.selectImage(uri)
     }
-
 
 }

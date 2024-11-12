@@ -3,6 +3,7 @@ package com.example.awesomechat.repository.firebase
 import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
+import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.interact.InteractMessage
 import com.example.awesomechat.model.Conversation
 import com.example.awesomechat.model.DetailMessage
@@ -13,10 +14,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.StorageReference
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -40,7 +37,8 @@ class MessageRepository @Inject constructor(
         val idUser = fetchIdUser(emailCurrent)!!
         val idRecipientList = mutableListOf<String>()
         val messageList = mutableListOf<Messages>()
-        val listenerRegistration =db.collection("Conversation").whereArrayContains("user", idUser)
+        val listenerRegistration = db.collection(InfoFieldQuery.COLLECTION_CONVERSATION)
+            .whereArrayContains(InfoFieldQuery.KEY_USER, idUser)
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
                     close(e)
@@ -48,63 +46,77 @@ class MessageRepository @Inject constructor(
                 }
                 val idMessages = snapshot?.mapNotNull { it.id }
 
-                if (idMessages.isNullOrEmpty()){
+                if (idMessages.isNullOrEmpty()) {
                     trySend(emptyList()).isSuccess
                 }
-                val arrayUserList = snapshot?.mapNotNull { id -> id.get("user") as List<String> }
-                for (list in arrayUserList!!) {
-                    idRecipientList.add(list.firstOrNull { it != idUser }!!)
+                val arrayUserList = snapshot?.mapNotNull { id -> id.get("user") }
+                if (arrayUserList.isNullOrEmpty()) {
+                   trySend(emptyList())
                 }
-                idMessages?.forEachIndexed { index, idMess ->
-                    db.collection("Messages").document(idMess).collection("Message")
-                        .addSnapshotListener { snapshotMess, eMess ->
-                            if (eMess != null) {
-                                return@addSnapshotListener
-                            }
-                            if (snapshotMess != null && !snapshotMess.isEmpty) {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    try {
-                                        val latestMessage =
-                                            db.collection("Messages").document(idMess)
-                                                .collection("Message")
-                                                .orderBy("time", Query.Direction.DESCENDING)
-                                                .limit(1).get().await()
-                                                .firstOrNull()?.toObject(DetailMessage::class.java)
+                else{
+                    val filteredUsers = arrayUserList.filterIsInstance<List<String>>()
+                    for (list in filteredUsers) {
+                        idRecipientList.add(list.firstOrNull { it != idUser }!!)
+                    }
+                    idMessages?.forEachIndexed { index, idMess ->
+                        db.collection(InfoFieldQuery.COLLECTION_MESSAGES).document(idMess)
+                            .collection(InfoFieldQuery.KEY_MESSAGE)
+                            .addSnapshotListener { snapshotMess, _ ->
+                                if (snapshotMess != null && !snapshotMess.isEmpty) {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        try {
+                                            val latestMessage =
+                                                db.collection(InfoFieldQuery.COLLECTION_MESSAGES)
+                                                    .document(idMess)
+                                                    .collection(InfoFieldQuery.KEY_MESSAGE)
+                                                    .orderBy(
+                                                        InfoFieldQuery.KEY_TIME,
+                                                        Query.Direction.DESCENDING
+                                                    )
+                                                    .limit(1).get().await()
+                                                    .firstOrNull()
+                                                    ?.toObject(DetailMessage::class.java)
 
-                                        val quantity = db.collection("Messages").document(idMess)
-                                            .collection("Message")
-                                            .whereEqualTo("status", false)
-                                            .whereEqualTo("sentby", idRecipientList[index])
-                                            .get().await().size()
+                                            val quantity =
+                                                db.collection(InfoFieldQuery.COLLECTION_MESSAGES)
+                                                    .document(idMess)
+                                                    .collection(InfoFieldQuery.KEY_MESSAGE)
+                                                    .whereEqualTo(InfoFieldQuery.KEY_STATUS, false)
+                                                    .whereEqualTo(
+                                                        InfoFieldQuery.KEY_SENT_BY,
+                                                        idRecipientList[index]
+                                                    )
+                                                    .get().await().size()
 
-                                        val user =
-                                            db.collection("User").document(idRecipientList[index])
-                                                .get().await()
-                                                .toObject(User::class.java)
+                                            val user =
+                                                db.collection(InfoFieldQuery.COLLECTION_USER)
+                                                    .document(idRecipientList[index])
+                                                    .get().await()
+                                                    .toObject(User::class.java)
 
-                                        if (latestMessage != null && user != null) {
-                                            val messages = Messages(
-                                                url = user.url,
-                                                email = user.email,
-                                                name = user.name,
-                                                currentMessage = latestMessage.content,
-                                                time = latestMessage.time,
-                                                quantity = quantity,
-                                                status = latestMessage.status,
-                                                type = latestMessage.type
-                                            )
-                                            Log.w("Test", messages.currentMessage.toString() +"quantity :"+ messages.quantity.toString() + " status:" + messages.status.toString())
-                                            withContext(Dispatchers.Main) {
-                                                updateOrAddMessage(messageList,messages)
-                                                trySend(messageList).isSuccess
+                                            if (latestMessage != null && user != null) {
+                                                val messages = Messages(
+                                                    url = user.url,
+                                                    email = user.email,
+                                                    name = user.name,
+                                                    currentMessage = latestMessage.content,
+                                                    time = latestMessage.time,
+                                                    quantity = quantity,
+                                                    status = latestMessage.status,
+                                                    type = latestMessage.type
+                                                )
+                                                withContext(Dispatchers.Main) {
+                                                    updateOrAddMessage(messageList, messages)
+                                                    trySend(messageList).isSuccess
+                                                }
                                             }
+                                        } catch (e: Exception) {
+                                            Log.w("Error firebase", "Error fetching messages", e)
                                         }
-                                    } catch (e: Exception) {
-                                        Log.w("Firestore", "Error fetching messages", e)
                                     }
                                 }
                             }
-                        }
+                    }
                 }
             }
         awaitClose { listenerRegistration.remove() }
@@ -121,8 +133,8 @@ class MessageRepository @Inject constructor(
     override suspend fun sentMessage(recipient: String, content: String) {
         val idUser = fetchIdUser(emailCurrent)!!
         val idRecipient = fetchIdUser(recipient) ?: return
-        val message = DetailMessage(content, idUser, false, Timestamp.now().toDate(), "mess")
-        db.collection("Messages").document(getIdMess(idUser, idRecipient)).collection("Message")
+        val message = DetailMessage(content, idUser, false, Timestamp.now().toDate(), InfoFieldQuery.TYPE_MESS)
+        db.collection(InfoFieldQuery.COLLECTION_MESSAGES).document(getIdMess(idUser, idRecipient)).collection(InfoFieldQuery.KEY_MESSAGE)
             .add(message).await()
     }
 
@@ -136,15 +148,15 @@ class MessageRepository @Inject constructor(
             list.add(newUri.toString())
         }
         val message =
-            DetailMessage("", idUser, false, Timestamp.now().toDate(), "multi image", list)
-        db.collection("Messages").document(getIdMess(idUser, idRecipient)).collection("Message")
+            DetailMessage("", idUser, false, Timestamp.now().toDate(), InfoFieldQuery.TYPE_MULTI, list)
+        db.collection(InfoFieldQuery.COLLECTION_MESSAGES).document(getIdMess(idUser, idRecipient)).collection(InfoFieldQuery.KEY_MESSAGE)
             .add(message).await()
     }
 
     override suspend fun createConversation(idUser: String, idRecipient: String): String {
         val id = UUID.randomUUID().toString()
-        val conversation = Conversation(id, "double", arrayListOf(idUser, idRecipient))
-        db.collection("Conversation").document(id).set(conversation).await()
+        val conversation = Conversation(id, InfoFieldQuery.TYPE_DOUBLE, arrayListOf(idUser, idRecipient))
+        db.collection(InfoFieldQuery.COLLECTION_CONVERSATION).document(id).set(conversation).await()
         return id
     }
 
@@ -155,8 +167,8 @@ class MessageRepository @Inject constructor(
             storage.child(UUID.randomUUID().toString()).putFile(it)
                 .await().metadata?.reference?.downloadUrl?.await()?.toString() ?: ""
         }
-        val message = DetailMessage(newUri, idUser, false, Timestamp.now().toDate(), "image")
-        db.collection("Messages").document(getIdMess(idUser, idRecipient)).collection("Message")
+        val message = DetailMessage(newUri, idUser, false, Timestamp.now().toDate(), InfoFieldQuery.TYPE_IMAGE)
+        db.collection(InfoFieldQuery.COLLECTION_MESSAGES).document(getIdMess(idUser, idRecipient)).collection(InfoFieldQuery.KEY_MESSAGE)
             .add(message).await()
     }
 
@@ -166,12 +178,12 @@ class MessageRepository @Inject constructor(
             val idRecipient = fetchIdUser(recipient)!!
             val idMess = getIdMess(idUser, idRecipient)
             val messageQuerySnapshot =
-                db.collection("Messages").document(idMess).collection("Message")
-            messageQuerySnapshot.whereEqualTo("sentby", idRecipient)
-                .whereEqualTo("status", false).get().addOnSuccessListener {
+                db.collection(InfoFieldQuery.COLLECTION_MESSAGES).document(idMess).collection(InfoFieldQuery.KEY_MESSAGE)
+            messageQuerySnapshot.whereEqualTo(InfoFieldQuery.KEY_SENT_BY, idRecipient)
+                .whereEqualTo(InfoFieldQuery.KEY_STATUS, false).get().addOnSuccessListener {
                     it.documents.mapNotNull { document ->
-                        db.collection("Messages").document(idMess).collection("Message")
-                            .document(document.id).update("status", true)
+                        db.collection(InfoFieldQuery.COLLECTION_MESSAGES).document(idMess).collection(InfoFieldQuery.KEY_MESSAGE)
+                            .document(document.id).update(InfoFieldQuery.KEY_STATUS, true)
                     }
                 }.await()
         } catch (exception: Exception) {
@@ -183,7 +195,7 @@ class MessageRepository @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val idUser =
-                    db.collection("User").whereEqualTo("email", email).get()
+                    db.collection(InfoFieldQuery.COLLECTION_USER).whereEqualTo(InfoFieldQuery.KEY_EMAIL, email).get()
                         .await().documents.firstNotNullOfOrNull { it.id }
                 idUser
             } catch (exception: Exception) {
@@ -198,7 +210,7 @@ class MessageRepository @Inject constructor(
             val idRecipient = fetchIdUser(recipient) ?: return@callbackFlow
             val idMess = checkIdMess(idRecipient, idUser)
             if (idMess != null) {
-                val docRef = db.collection("Messages").document(idMess).collection("Message")
+                val docRef = db.collection(InfoFieldQuery.COLLECTION_MESSAGES).document(idMess).collection(InfoFieldQuery.KEY_MESSAGE)
                 val listenerRegistration = docRef.addSnapshotListener { snapshot, e ->
                     if (e != null) {
                         close(e)
@@ -216,10 +228,10 @@ class MessageRepository @Inject constructor(
 
     private suspend fun getIdMess(idUser: String, idRecipient: String): String {
         val idMessQuerySnapshot =
-            db.collection("Conversation").whereArrayContains("user", idUser)
-                .whereEqualTo("type", "double").get().await()
+            db.collection(InfoFieldQuery.COLLECTION_CONVERSATION).whereArrayContains(InfoFieldQuery.KEY_USER, idUser)
+                .whereEqualTo(InfoFieldQuery.KEY_TYPE, InfoFieldQuery.TYPE_DOUBLE).get().await()
         val idMess = idMessQuerySnapshot.documents.filter { document ->
-            val users = document.get("user") as? List<String> ?: emptyList()
+            val users = document.get(InfoFieldQuery.KEY_USER) as? List<String> ?: emptyList()
             listOf(idUser, idRecipient).all { it in users }
         }.map { it.id }
         return if (idMess.isEmpty())
@@ -230,19 +242,13 @@ class MessageRepository @Inject constructor(
 
     private suspend fun checkIdMess(idUser: String, idRecipient: String): String? {
         val idMessQuerySnapshot =
-            db.collection("Conversation").whereArrayContains("user", idUser)
-                .whereEqualTo("type", "double").get().await()
+            db.collection(InfoFieldQuery.COLLECTION_CONVERSATION).whereArrayContains(InfoFieldQuery.KEY_USER, idUser)
+                .whereEqualTo(InfoFieldQuery.KEY_TYPE, InfoFieldQuery.TYPE_DOUBLE).get().await()
         val idMess = idMessQuerySnapshot.documents.filter { document ->
-            val users = document.get("user") as? List<String> ?: emptyList()
+        val users = document.get(InfoFieldQuery.KEY_USER) as? List<String> ?: emptyList()
             listOf(idUser, idRecipient).all { it in users }
         }.map { it.id }
         return if (idMess.isNotEmpty()) idMess[0] else null
     }
 }
 
-@Module
-@InstallIn(ViewModelComponent::class)
-abstract class MessageModule {
-    @Binds
-    abstract fun bindInteractMessage(messageRepository: MessageRepository): InteractMessage
-}

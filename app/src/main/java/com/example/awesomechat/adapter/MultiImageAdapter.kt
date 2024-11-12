@@ -10,9 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.awesomechat.R
 
-class MultiImageAdapter : ListAdapter<String, MultiImageAdapter.MultiImageViewHolder>(
-    ImageFromGalleryAdapter.ImageDiffUtil()
-) {
+class MultiImageAdapter :
+    ListAdapter<String, MultiImageAdapter.MultiImageViewHolder>(ImageDiffUtil()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MultiImageViewHolder {
         return MultiImageViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.item_image, parent, false)

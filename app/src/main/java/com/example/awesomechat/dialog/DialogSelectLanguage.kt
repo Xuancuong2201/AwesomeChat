@@ -8,21 +8,21 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import androidx.fragment.app.DialogFragment
-import com.example.awesomechat.ChatApplication
 import com.example.awesomechat.databinding.DialogSelectLanguageBinding
+import com.example.awesomechat.view.MainActivity
 import java.util.Locale
 
 class DialogSelectLanguage : DialogFragment() {
     private lateinit var dialogBinding: DialogSelectLanguageBinding
-    private lateinit var myApp: ChatApplication
     private lateinit var sharedPref: SharedPreferences
-    var myLang = ""
+    private lateinit var mainActivity: MainActivity
+    private var myLang = ""
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         dialogBinding = DialogSelectLanguageBinding.inflate(layoutInflater)
         val builder = AlertDialog.Builder(requireContext())
-        myApp = requireActivity().application as ChatApplication
-        sharedPref = myApp.sharedPref
-        myLang = sharedPref.getString("language", "vi")!!
+        mainActivity = requireActivity() as MainActivity
+        sharedPref = mainActivity.sharedPref
+        myLang = mainActivity.sharedPref.getString("language", "vi")!!
         builder.setView(dialogBinding.root)
         return builder.create()
     }
@@ -73,7 +73,6 @@ class DialogSelectLanguage : DialogFragment() {
             }
         }
     }
-
     companion object {
         fun newInstance(): DialogSelectLanguage {
             return DialogSelectLanguage()
