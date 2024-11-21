@@ -19,6 +19,9 @@
         <action
             android:id="@+id/splash_go_to_HomeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_splashFragment_to_fragmentDetailsMessage"
+            app:destination="@id/fragmentDetailsMessage" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -78,6 +81,7 @@
         <argument
             android:name="message"
             app:argType="com.example.awesomechat.model.Messages" />
+
 
     </fragment>
     <fragment

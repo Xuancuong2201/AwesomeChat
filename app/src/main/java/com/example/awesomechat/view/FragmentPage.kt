@@ -13,6 +13,7 @@ import com.example.awesomechat.R
 import com.example.awesomechat.databinding.FragmentPageBinding
 import com.example.awesomechat.dialog.DialogLogout
 import com.example.awesomechat.dialog.DialogSelectLanguage
+import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.viewmodel.PageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,24 +38,24 @@ class FragmentPage : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnLogout.setOnClickListener {
+        binding.imgPersonalMini.setOnClickListener{
             val dialog = DialogLogout.newInstance {
                 if (it) viewModelPage.logOut()
             }
-            dialog.show(childFragmentManager, "Dialog_Logout")
+            dialog.show(childFragmentManager, InfoFieldQuery.DIALOG_LOGOUT)
         }
         binding.btEdit.setOnClickListener {
             val navController = (activity as MainActivity).findNavController(R.id.fragment)
             navController.navigate(R.id.action_homeFragment_to_fragmentEdit2)
         }
-        if (mainActivity.sharedPref.getString("language", "vi")!!.equals("vi"))
+        if (mainActivity.sharedPref.getString(InfoFieldQuery.LANGUAGE, InfoFieldQuery.VIETNAM)!! == InfoFieldQuery.VIETNAM)
             binding.tvLanguageSelected.text = getString(R.string.vietnamese)
         else
             binding.tvLanguageSelected.text = getString(R.string.english)
 
         binding.btnSelectLanguage.setOnClickListener {
             val dialog = DialogSelectLanguage.newInstance()
-            dialog.show(parentFragmentManager, "dialog select language")
+            dialog.show(parentFragmentManager, InfoFieldQuery.DIALOG_SELECT)
         }
     }
 

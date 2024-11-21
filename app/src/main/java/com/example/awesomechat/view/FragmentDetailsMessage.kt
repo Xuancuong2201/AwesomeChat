@@ -8,10 +8,12 @@ import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -22,10 +24,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.awesomechat.R
 import com.example.awesomechat.adapter.DetailsMessageAdapter
 import com.example.awesomechat.adapter.ImageFromGalleryAdapter
 import com.example.awesomechat.databinding.FragmentDetailsMessageBinding
+import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.interact.InteractData.Companion.adjustList
+import com.example.awesomechat.model.Messages
 import com.example.awesomechat.viewmodel.DetailsMessageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -36,40 +41,42 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
     private lateinit var detailsMessageAdapter: DetailsMessageAdapter
     private lateinit var imageFromGalleryAdapter: ImageFromGalleryAdapter
     private lateinit var controller: NavController
-    private val args: FragmentDetailsMessageArgs by navArgs()
+    private lateinit var message: Messages
+    private val argsNav: FragmentDetailsMessageArgs by navArgs()
     private val viewModel: DetailsMessageViewModel by viewModels()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val argsNotify = arguments?.getSerializable(InfoFieldQuery.KEY_DETAILS) as Messages?
+        message = argsNotify ?: argsNav.message
+        viewModel.getDetailsMessage(message.email.toString())
+
+    }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         detailsMessageAdapter = DetailsMessageAdapter(viewModel)
         imageFromGalleryAdapter = ImageFromGalleryAdapter(this)
         binding = FragmentDetailsMessageBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewmodel = viewModel
-        viewModel.getDetailsMessage(args.message.email.toString())
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         controller = findNavController()
-
-        viewModel.imageUrl.value = args.message.url.toString()
-
-        viewModel.name.value = args.message.name.toString()
+        viewModel.imageUrl.value = message.url
+        viewModel.name.value = message.name
+        viewModel.email.value = message.email
 
         viewModel.content.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 viewModel.stateButton.value = false
                 binding.btnSend.visibility = View.VISIBLE
                 binding.rcvGallery.visibility = View.GONE
-            } else
-                binding.btnSend.visibility = View.GONE
-
+            } else binding.btnSend.visibility = View.GONE
         }
-
         viewModel.stateButton.observe(viewLifecycleOwner) {
             if (it) {
                 binding.btnSend.visibility = View.VISIBLE
@@ -81,7 +88,6 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
                 binding.btnSend.visibility = View.GONE
             }
         }
-
         viewModel.listDetailsMessage.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 detailsMessageAdapter.submitList(adjustList(it))
@@ -90,10 +96,8 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
                     rcv.adapter = detailsMessageAdapter
                     rcv.scrollToPosition(detailsMessageAdapter.itemCount - 1)
                 }
-
             }
         }
-
         viewModel.listImageLiveData.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 binding.btSentImage.visibility = View.VISIBLE
@@ -108,12 +112,12 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
             this.onDestroy()
 
         }
-
         binding.btnSend.setOnClickListener {
             if (binding.tvMessage.text.toString().isNotEmpty()) {
                 lifecycleScope.launch {
-                    viewModel.sentMessage(args.message.email.toString())
-                    viewModel.getDetailsMessage(args.message.email.toString())
+                    viewModel.sentMessage(
+                        viewModel.email.value.toString(), binding.tvMessage.text.toString()
+                    )
                     binding.tvMessage.text.clear()
                 }
             }
@@ -132,20 +136,27 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
 
         binding.btGallery.setOnClickListener {
             viewModel.changeStateButton()
+//            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                ActivityCompat.requestPermissions(
+//                    requireActivity(),
+//                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+//                    InfoFieldQuery.REQUEST_GALLERY
+//                )
+//            }
             if (ContextCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.READ_MEDIA_IMAGES
                 ) != PackageManager.PERMISSION_GRANTED
-            )
+            ) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     ActivityCompat.requestPermissions(
                         requireActivity(),
                         arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
-                        1
+                        InfoFieldQuery.REQUEST_GALLERY
                     )
-                } else
-                    imageFromGalleryAdapter.submitList(getListImageFromGallery())
-
+                }
+            }
+            imageFromGalleryAdapter.submitList(getListImageFromGallery())
         }
 
         binding.btSentImage.setOnClickListener {
@@ -153,10 +164,10 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
             binding.progressBar.visibility = View.VISIBLE
             lifecycleScope.launch {
                 viewModel.apply {
-                    sentImage(args.message.email.toString())
+                    sentImage(message.email.toString(),getString(R.string.type_image))
                     clearListImage()
                     binding.progressBar.visibility = View.GONE
-                    getDetailsMessage(args.message.email.toString())
+                    getDetailsMessage(message.email.toString())
                 }
             }
         }
@@ -168,11 +179,7 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
         var mCursor: Cursor? = null
         try {
             mCursor = requireActivity().contentResolver.query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                projection,
-                null,
-                null,
-                null
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null
             )
             mCursor?.apply {
                 val index = getColumnIndex(MediaStore.Images.Media._ID)
@@ -181,6 +188,7 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
                     val contentUri =
                         ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
                     imageList.add(contentUri.toString())
+
                 }
             }
         } finally {
@@ -191,6 +199,23 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
 
     override fun selectImage(position: Int, uri: String) {
         viewModel.selectImage(uri)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            InfoFieldQuery.REQUEST_GALLERY -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    imageFromGalleryAdapter.submitList(getListImageFromGallery())
+                } else
+                    Toast.makeText(context, getString(R.string.request_gallery), Toast.LENGTH_SHORT)
+                        .show()
+            }
+        }
     }
 
 }

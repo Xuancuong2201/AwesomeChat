@@ -5,8 +5,15 @@ import com.example.awesomechat.model.User
 
 interface InteractUser {
     val emailCurrent: String
-    fun updaterRecordUser(imageUri: Uri?, email: String, name: String, numberPhone: String, birthDay: String)
+    fun updaterRecordUser(
+        imageUri: Uri?,
+        email: String,
+        name: String,
+        numberPhone: String,
+        birthDay: String
+    )
+
     suspend fun getRecordUser(email: String): User?
-    suspend fun getUrlUser(email:String): String?
+    suspend fun getUrlUser(email: String): String?
     fun signOut()
 }

@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.Gravity
 import androidx.fragment.app.DialogFragment
 import com.example.awesomechat.databinding.DialogSelectLanguageBinding
+import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.view.MainActivity
 import java.util.Locale
 
@@ -22,7 +23,7 @@ class DialogSelectLanguage : DialogFragment() {
         val builder = AlertDialog.Builder(requireContext())
         mainActivity = requireActivity() as MainActivity
         sharedPref = mainActivity.sharedPref
-        myLang = mainActivity.sharedPref.getString("language", "vi")!!
+        myLang = mainActivity.sharedPref.getString(InfoFieldQuery.LANGUAGE, InfoFieldQuery.VIETNAM)!!
         builder.setView(dialogBinding.root)
         return builder.create()
     }
@@ -34,7 +35,7 @@ class DialogSelectLanguage : DialogFragment() {
             it.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             it.setCancelable(false)
         }
-        if (myLang.contentEquals("vi")) {
+        if (myLang.contentEquals(InfoFieldQuery.VIETNAM)) {
             dialogBinding.rdbVi.isChecked = true
             dialogBinding.rdbEn.isChecked = false
         } else {
@@ -43,9 +44,9 @@ class DialogSelectLanguage : DialogFragment() {
         }
         dialogBinding.btConfirm.setOnClickListener {
             if (dialogBinding.rdbEn.isChecked)
-                setLanguage("en")
+                setLanguage(InfoFieldQuery.ENGLISH)
             else
-                setLanguage("vi")
+                setLanguage(InfoFieldQuery.VIETNAM)
             dialog?.dismiss()
             requireActivity().recreate()
 
@@ -61,14 +62,14 @@ class DialogSelectLanguage : DialogFragment() {
         Locale.setDefault(locale)
         config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
-        if (lang == "vi") {
+        if (lang == InfoFieldQuery.VIETNAM) {
             with(sharedPref.edit()) {
-                putString("language", "vi")
+                putString(InfoFieldQuery.LANGUAGE, InfoFieldQuery.VIETNAM)
                 commit()
             }
         } else {
             with(sharedPref.edit()) {
-                putString("language", "en")
+                putString(InfoFieldQuery.LANGUAGE, InfoFieldQuery.ENGLISH)
                 commit()
             }
         }

@@ -1,6 +1,8 @@
 package com.example.awesomechat.view
 
 import android.os.Bundle
+import android.util.Log
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +13,10 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.example.awesomechat.R
 import com.example.awesomechat.databinding.FragmentHomeBinding
+import com.example.awesomechat.model.Messages
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class FragmentHome : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var navHostFragment: NavHostFragment
@@ -29,6 +33,7 @@ class FragmentHome : Fragment() {
         navHostFragment =
             childFragmentManager.findFragmentById(R.id.fragment_home) as NavHostFragment
         NavigationUI.setupWithNavController(binding.bottomNav, navHostFragment.navController)
+
         binding.cardview.viewTreeObserver.addOnGlobalLayoutListener {
             val insets = ViewCompat.getRootWindowInsets(view)
             val imeVisible = insets?.isVisible(WindowInsetsCompat.Type.ime())
@@ -37,5 +42,6 @@ class FragmentHome : Fragment() {
             else
                 binding.cardview.visibility = View.VISIBLE
         }
+
     }
 }

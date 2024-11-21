@@ -6,6 +6,8 @@ interface InteractAuthentication {
     fun checkUserCurrent():Boolean
     fun registerAccount(name: String, email: String, password: String, callBack: (Boolean) -> Unit)
     fun login(email: String, password: String, callBack: (Boolean) -> Unit)
-    fun signOut()
+    suspend fun  signOut()
     fun addUser(name: String, email: String)
+    fun fetchTokenAndUpdate()
+    suspend fun updateToken(token: String)
 }

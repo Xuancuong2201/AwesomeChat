@@ -5,4 +5,5 @@
     </style>
 
     <style name="Theme.AwesomeChat" parent="Base.Theme.AwesomeChat" />
+
 </resources>

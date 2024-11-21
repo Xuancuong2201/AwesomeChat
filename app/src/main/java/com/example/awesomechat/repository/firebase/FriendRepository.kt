@@ -120,7 +120,6 @@ class FriendRepository @Inject constructor(auth: FirebaseAuth, private val db: F
             }
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    val listenerUser =
                         db.collection(InfoFieldQuery.COLLECTION_USER).addSnapshotListener { snapshotUser, eUser ->
                             if (eUser != null) {
                                 close(eUser)
@@ -140,7 +139,6 @@ class FriendRepository @Inject constructor(auth: FirebaseAuth, private val db: F
                                 }
                             }
                         }
-                    awaitClose { listenerUser.remove() }
                 } catch (e: Exception) {
                     Log.w("Error", "Error fetching messages", e)
                 }

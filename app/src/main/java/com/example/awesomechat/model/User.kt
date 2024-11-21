@@ -8,5 +8,6 @@ data class User(
     val email: String = "",
     val numberphone: String = "",
     val birthday: String = "",
-    var state: String = ""
-): Serializable
+    var state: String = "",
+    val token: String = ""
+) : Serializable

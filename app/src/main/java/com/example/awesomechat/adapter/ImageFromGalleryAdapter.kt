@@ -43,7 +43,6 @@ class ImageFromGalleryAdapter(private val imageClickInterface: ImageClickInterfa
         fun selectImage(position: Int, uri: String)
     }
 }
-
 class ImageDiffUtil : DiffUtil.ItemCallback<String>() {
     override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
         return newItem == oldItem

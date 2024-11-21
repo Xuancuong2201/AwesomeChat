@@ -1,7 +1,6 @@
 package com.example.awesomechat.viewmodel
 
 import android.content.Context
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class EditViewModel @Inject constructor(private val interact: InteractUser, @ApplicationContext val context: Context
+    class EditViewModel @Inject constructor(private val interact: InteractUser, @ApplicationContext val context: Context
 ) : ViewModel() {
     val email by lazy {MutableLiveData<String>()}
     val name by lazy {MutableLiveData<String>()}

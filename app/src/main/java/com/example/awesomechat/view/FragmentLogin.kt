@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.awesomechat.R
 import com.example.awesomechat.databinding.FragmentLoginBinding
 import com.example.awesomechat.dialog.DialogConfirm
+import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.interact.InteractData.Companion.isValidEmail
 import com.example.awesomechat.interact.InteractData.Companion.isValidPassword
 import com.example.awesomechat.viewmodel.LoginViewmodel
@@ -65,10 +66,9 @@ class FragmentLogin : Fragment() {
                     val dialog = DialogConfirm.newInstance(getString(R.string.login_fail))
                     binding.progressBar.visibility = View.GONE
                     binding.tvStatus.text = getString(R.string.signIn1)
-                    dialog.show(childFragmentManager, "Dialog_Confirm")
+                    dialog.show(childFragmentManager, InfoFieldQuery.DIALOG_CONFIRM)
                 }
-
-                null -> Log.e("Tt", "OK")
+                null -> Log.e("Error", "OK")
             }
         }
         viewModel.result.observe(viewLifecycleOwner) {

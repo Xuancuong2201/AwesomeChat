@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.awesomechat.R
 import com.example.awesomechat.databinding.FragmentEditInforUserBinding
 import com.example.awesomechat.dialog.DialogConfirm
+import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.interact.InteractData
 import com.example.awesomechat.viewmodel.EditViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -73,7 +74,7 @@ class FragmentEditInfoUser : Fragment() {
                 controller.popBackStack()
             } else {
                 val dialog = DialogConfirm.newInstance(getString(R.string.edit_fail))
-                dialog.show(childFragmentManager, "Dialog_Confirm")
+                dialog.show(childFragmentManager, InfoFieldQuery.DIALOG_CONFIRM)
             }
         }
     }

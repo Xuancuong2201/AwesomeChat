@@ -1,16 +1,14 @@
 package com.example.awesomechat.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.interact.InteractFriend
 import com.example.awesomechat.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 
@@ -27,7 +25,7 @@ class FriendViewModel @Inject constructor(private val interactFriend: InteractFr
         viewModelScope.launch {
                 interactFriend.getInvitationFriend().collect { users ->
                     val invitationFriend = users.map { item ->
-                        item.copy(state = "invitation")
+                        item.copy(state = InfoFieldQuery.STATE_INVITATION)
                     }
                     invitationList.postValue(invitationFriend)
                     quantityRequest.postValue(invitationFriend.size)
@@ -36,7 +34,7 @@ class FriendViewModel @Inject constructor(private val interactFriend: InteractFr
         viewModelScope.launch {
             interactFriend.getRequestFriend().collect { users ->
                 val requestFriend = users.map {
-                    it.copy(state = "request")
+                    it.copy(state = InfoFieldQuery.STATE_REQUEST)
                 }
                 requestList.postValue(requestFriend)
             }
@@ -44,7 +42,7 @@ class FriendViewModel @Inject constructor(private val interactFriend: InteractFr
         viewModelScope.launch {
             interactFriend.getRemainUser().collect { users ->
                 val remainList = users.map { user ->
-                    user.copy(state = "user")
+                    user.copy(state = InfoFieldQuery.STATE_USER)
                 }
                 userRemainList.postValue(remainList)
             }
@@ -52,7 +50,7 @@ class FriendViewModel @Inject constructor(private val interactFriend: InteractFr
         viewModelScope.launch {
             interactFriend.getStateFriend().collect { users ->
                 val listFriend = users.map {
-                    it.copy(state = "friend")
+                    it.copy(state =InfoFieldQuery.STATE_FRIEND)
                 }
                 friendList.postValue(listFriend)
             }

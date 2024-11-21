@@ -36,7 +36,7 @@ class FragmentFriend : Fragment() {
             when (positions) {
                 0 -> tab.setText(R.string.friend)
                 1 -> tab.setText(R.string.all)
-                2 -> tab.text = "Yêu cầu"
+                2 -> tab.setText(R.string.request)
             }
         }.attach()
         customView = LayoutInflater.from(requireContext()).inflate(R.layout.tab_request, null)

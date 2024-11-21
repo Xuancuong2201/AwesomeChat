@@ -13,8 +13,10 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class ChatViewModel @Inject constructor(private val interactMessage: InteractMessage) : ViewModel() {
-    val messageList: MutableLiveData<List<Messages>> by lazy {   MutableLiveData<List<Messages>>() }
+class ChatViewModel @Inject constructor(private val interactMessage: InteractMessage) :
+    ViewModel() {
+    val messageList: MutableLiveData<List<Messages>> by lazy { MutableLiveData<List<Messages>>() }
+
     init {
         viewModelScope.launch {
             interactMessage.getListMessage().collect { users ->
@@ -23,7 +25,7 @@ class ChatViewModel @Inject constructor(private val interactMessage: InteractMes
         }
     }
 
-    fun changeStatus(email:String){
+    fun changeStatus(email: String) {
         viewModelScope.launch {
             interactMessage.changeStatusMessage(email)
         }

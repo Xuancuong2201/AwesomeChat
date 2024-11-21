@@ -2,6 +2,8 @@ package com.example.awesomechat.view
 
 
 import android.os.Bundle
+import android.util.Log
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +17,7 @@ import com.example.awesomechat.adapter.MessagesAdapter
 import com.example.awesomechat.databinding.FragmentMessageBinding
 import com.example.awesomechat.model.Messages
 import com.example.awesomechat.viewmodel.ChatViewModel
+
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -24,6 +27,7 @@ class FragmentMessage : Fragment() {
     private lateinit var adapter: MessagesAdapter
     private lateinit var controller: NavController
     private val viewModel: ChatViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,21 +49,17 @@ class FragmentMessage : Fragment() {
             }
         })
 
-        viewModel.messageList.observe(viewLifecycleOwner) {
-            binding.progressBar.visibility = View.GONE
-            adapter.setItems(it)
-        }
-
         binding.rcvMessage.let { rcv ->
             rcv.layoutManager = LinearLayoutManager(requireContext())
             rcv.adapter = adapter
         }
-
+        viewModel.messageList.observe(viewLifecycleOwner) {
+            binding.progressBar.visibility = View.GONE
+            adapter.submitList(it.toList())
+        }
         binding.btnCreateMessage.setOnClickListener {
             controller.navigate(R.id.action_homeFragment_to_fragmentCreateMess)
         }
-
-
     }
 
     override fun onStart() {
