@@ -1,13 +1,13 @@
 package com.example.awesomechat.viewmodel
 
+import android.content.ContentUris
 import android.content.Context
-import android.util.Log
-import androidx.core.content.ContextCompat.getString
+import android.database.Cursor
+import android.provider.MediaStore
 import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.awesomechat.R
 import com.example.awesomechat.api.NotificationAPI
 import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.interact.InteractMessage
@@ -21,24 +21,30 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailsMessageViewModel @Inject constructor(private val interactMessage: InteractMessage,@ApplicationContext context:Context) :
+class DetailsMessageViewModel @Inject constructor(
+    private val interactMessage: InteractMessage,
+    @ApplicationContext val context: Context
+) :
     ViewModel() {
-    private lateinit var user :User
+    private lateinit var user: User
     val name by lazy { MutableLiveData<String>() }
     val imageUrl by lazy { MutableLiveData<String>() }
     val email by lazy { MutableLiveData<String>() }
     val content by lazy { MutableLiveData<String>() }
     val listDetailsMessage by lazy { MutableLiveData<List<DetailMessage>>() }
     val listImageLiveData by lazy { MutableLiveData<List<String>>() }
-    val stateButton by lazy { MutableLiveData<Boolean>(false) }
+    val stateButton by lazy { MutableLiveData(false) }
+
     init {
         viewModelScope.launch {
             user = DataStoreManager.getSavedInformationUser(context)
         }
     }
+
     fun getDetailsMessage(recipient: String) {
         viewModelScope.launch {
             val idUser: String = interactMessage.fetchIdUser(interactMessage.emailCurrent)!!
@@ -62,28 +68,10 @@ class DetailsMessageViewModel @Inject constructor(private val interactMessage: I
         }
     }
 
-    suspend fun sentImage(recipient: String,content: String) {
-        sendNotificationMessage(recipient,content)
-        if (listImageLiveData.value != null) {
-            if (listImageLiveData.value!!.size == 1) {
-                viewModelScope.launch {
-                    interactMessage.sentImage(
-                        recipient,
-                        listImageLiveData.value!!.firstOrNull()!!.toUri()
-                    )
-                }.join()
-            } else {
-                viewModelScope.launch {
-                    interactMessage.sentMultiImage(recipient, listImageLiveData.value!!)
-                }.join()
-            }
-        }
-    }
-
     fun changeStateButton() {
         stateButton.postValue(!stateButton.value!!)
 
-        if(stateButton.value!!){
+        if (stateButton.value!!) {
             listImageLiveData.postValue(emptyList())
         }
     }
@@ -100,6 +88,24 @@ class DetailsMessageViewModel @Inject constructor(private val interactMessage: I
 
     fun clearListImage() {
         listImageLiveData.value = emptyList()
+    }
+
+    suspend fun sentImage(recipient: String, content: String) {
+        sendNotificationMessage(recipient, content)
+        if (listImageLiveData.value != null) {
+            if (listImageLiveData.value!!.size == 1) {
+                viewModelScope.launch {
+                    interactMessage.sentImage(
+                        recipient,
+                        listImageLiveData.value!!.firstOrNull()!!.toUri()
+                    )
+                }.join()
+            } else {
+                viewModelScope.launch {
+                    interactMessage.sentMultiImage(recipient, listImageLiveData.value!!)
+                }.join()
+            }
+        }
     }
 
     private fun sendNotificationMessage(recipient: String, content: String) {
@@ -120,6 +126,27 @@ class DetailsMessageViewModel @Inject constructor(private val interactMessage: I
                 )
                 NotificationAPI.sendNotification().notification(notification).execute()
             }
+        }
+    }
+
+    suspend fun getListImageFromGallery(): List<String> {
+        return withContext(Dispatchers.IO) {
+            val imageList = mutableListOf<String>()
+            val projection: Array<String> = arrayOf(MediaStore.Images.Media._ID)
+            val mCursor: Cursor? = context.contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null
+            )
+            mCursor?.use { cursor ->
+                val index = cursor.getColumnIndex(MediaStore.Images.Media._ID)
+                while (cursor.moveToNext()) {
+                    val id = cursor.getLong(index)
+                    val contentUri = ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                    )
+                    imageList.add(contentUri.toString())
+                }
+            }
+            imageList
         }
     }
 }

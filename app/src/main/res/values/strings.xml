@@ -86,5 +86,8 @@
     <string name="add">Kết bạn</string>
     <string name="request_gallery">Request permission gallery</string>
     <string name="default_notification_channel_id">Message Channel Id</string>
+    <string name="notify_success">Sign up to receive notifications successfully</string>
+    <string name="notify_failed">Registration failed</string>
+    <string name="notify_invitation">Đã gửi yêu cầu kết bạn</string>
 
 </resources>

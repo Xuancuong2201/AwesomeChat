@@ -50,12 +50,10 @@ class PushNotificationService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        if (remoteMessage.data[InfoFieldQuery.TYPE_NOTIFY].equals(InfoFieldQuery.TYPE_MESS)) {
-            generateNotificationMessage(remoteMessage)
-        }
+            generateNotification(remoteMessage)
     }
 
-    private fun generateNotificationMessage(remoteMessage: RemoteMessage) {
+    private fun generateNotification(remoteMessage: RemoteMessage) {
         if (ActivityCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.POST_NOTIFICATIONS
@@ -74,35 +72,47 @@ class PushNotificationService : FirebaseMessagingService() {
             })
             val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                 PendingIntent.FLAG_MUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
-            val contentInput =
-                RemoteInput.Builder(InfoFieldQuery.KEY_CONTENT).setLabel(getString(R.string.input_message)).build()
-            val replyIntent = Intent(applicationContext, MyReceiver::class.java).apply {
-                putExtra(InfoFieldQuery.KEY_EMAIL, remoteMessage.data[InfoFieldQuery.KEY_EMAIL])
+
+            if (remoteMessage.data[InfoFieldQuery.TYPE_NOTIFY].equals(InfoFieldQuery.TYPE_MESS)) {
+                val contentInput =
+                    RemoteInput.Builder(InfoFieldQuery.KEY_CONTENT).setLabel(getString(R.string.input_message)).build()
+                val replyIntent = Intent(applicationContext, MyReceiver::class.java).apply {
+                    putExtra(InfoFieldQuery.KEY_EMAIL, remoteMessage.data[InfoFieldQuery.KEY_EMAIL])
+                }
+                val replyPendingIntent = PendingIntent.getBroadcast(
+                    applicationContext,
+                    1,
+                    replyIntent,
+                    flag
+                )
+                val message = Messages(
+                    url = remoteMessage.data[InfoFieldQuery.KEY_IMG],
+                    email = remoteMessage.data[InfoFieldQuery.KEY_EMAIL],
+                    name = remoteMessage.data[InfoFieldQuery.KEY_TITLE]
+                )
+                val pendingIntent = NavDeepLinkBuilder(applicationContext)
+                    .setGraph(R.navigation.appchat_nav)
+                    .addDestination(R.id.fragmentDetailsMessage)
+                    .setArguments(Bundle().apply {
+                        putSerializable(InfoFieldQuery.KEY_DETAILS, message)
+                    })
+                    .createPendingIntent()
+                val replyAction = NotificationCompat.Action.Builder(0, "reply", replyPendingIntent)
+                    .addRemoteInput(contentInput).build()
+                notificationBuilder.setContentText(remoteMessage.data[InfoFieldQuery.KEY_CONTENT])
+                    .setContentTitle(remoteMessage.data[InfoFieldQuery.KEY_TITLE])
+                    .addAction(replyAction)
+                    .setContentIntent(pendingIntent)
             }
-            val replyPendingIntent = PendingIntent.getBroadcast(
-                applicationContext,
-                1,
-                replyIntent,
-                flag
-            )
-            val message = Messages(
-                url = remoteMessage.data[InfoFieldQuery.KEY_IMG],
-                email = remoteMessage.data[InfoFieldQuery.KEY_EMAIL],
-                name = remoteMessage.data[InfoFieldQuery.KEY_TITLE]
-            )
-            val pendingIntent = NavDeepLinkBuilder(applicationContext)
-                .setGraph(R.navigation.appchat_nav)
-                .addDestination(R.id.fragmentDetailsMessage)
-                .setArguments(Bundle().apply {
-                    putSerializable(InfoFieldQuery.KEY_DETAILS, message)
-                })
-                .createPendingIntent()
-            val replyAction = NotificationCompat.Action.Builder(0, "reply", replyPendingIntent)
-                .addRemoteInput(contentInput).build()
-            notificationBuilder.setContentText(remoteMessage.data[InfoFieldQuery.KEY_CONTENT])
-                .setContentTitle(remoteMessage.data[InfoFieldQuery.KEY_TITLE])
-                .addAction(replyAction)
-                .setContentIntent(pendingIntent)
+            else{
+                val pendingIntent = NavDeepLinkBuilder(applicationContext)
+                    .setGraph(R.navigation.bottom_nav)
+                    .addDestination(R.id.friendFragment)
+                    .createPendingIntent()
+                notificationBuilder.setContentText(getString(R.string.notify_invitation))
+                    .setContentTitle(remoteMessage.data[InfoFieldQuery.KEY_TITLE])
+                    .setContentIntent(pendingIntent)
+            }
             return notificationManager.notify(InfoFieldQuery.ID_NOTIFY, notificationBuilder.build())
         }
     }

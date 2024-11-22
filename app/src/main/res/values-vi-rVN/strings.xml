@@ -82,4 +82,7 @@
     <string name="notifi">Thông báo</string>
     <string name="add">Kết bạn</string>
     <string name="request_gallery">Yêu cầu quyền truy cập ảnh</string>
+    <string name="notify_success">Đăng ký nhận thông báo thành công</string>
+    <string name="notify_failed">Đăng ký nhận thông báo thất bai</string>
+    <string name="notify_invitation">Đã gửi yêu cầu kết bạn</string>
 </resources>

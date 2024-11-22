@@ -73,4 +73,7 @@
     <string name="notifi">Notification</string>
     <string name="add">Add friend</string>
     <string name="request_gallery">Request permission gallery</string>
+    <string name="notify_success">Sign up to receive notifications successfully</string>
+    <string name="notify_failed">Registration failed</string>
+    <string name="notify_invitation"> Sent request friend</string>
 </resources>

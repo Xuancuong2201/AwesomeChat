@@ -1,20 +1,15 @@
 package com.example.awesomechat.view
 
 import android.Manifest
-import android.content.ContentUris
 import android.content.Context
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -33,7 +28,9 @@ import com.example.awesomechat.interact.InteractData.Companion.adjustList
 import com.example.awesomechat.model.Messages
 import com.example.awesomechat.viewmodel.DetailsMessageViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInterface {
@@ -42,6 +39,7 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
     private lateinit var imageFromGalleryAdapter: ImageFromGalleryAdapter
     private lateinit var controller: NavController
     private lateinit var message: Messages
+    private lateinit var listImage: List<String>
     private val argsNav: FragmentDetailsMessageArgs by navArgs()
     private val viewModel: DetailsMessageViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +47,11 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
         val argsNotify = arguments?.getSerializable(InfoFieldQuery.KEY_DETAILS) as Messages?
         message = argsNotify ?: argsNav.message
         viewModel.getDetailsMessage(message.email.toString())
-
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                listImage = viewModel.getListImageFromGallery()
+            }
+        }
     }
 
     override fun onCreateView(
@@ -69,6 +71,7 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
         viewModel.imageUrl.value = message.url
         viewModel.name.value = message.name
         viewModel.email.value = message.email
+
 
         viewModel.content.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
@@ -136,27 +139,25 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
 
         binding.btGallery.setOnClickListener {
             viewModel.changeStateButton()
-//            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//                ActivityCompat.requestPermissions(
-//                    requireActivity(),
-//                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-//                    InfoFieldQuery.REQUEST_GALLERY
-//                )
-//            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.READ_MEDIA_IMAGES
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermissionStorage.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                } else
+                    imageFromGalleryAdapter.submitList(listImage)
+            }
             if (ContextCompat.checkSelfPermission(
                     requireContext(),
-                    Manifest.permission.READ_MEDIA_IMAGES
+                    Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    ActivityCompat.requestPermissions(
-                        requireActivity(),
-                        arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
-                        InfoFieldQuery.REQUEST_GALLERY
-                    )
-                }
+                requestPermissionStorage.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            } else {
+                imageFromGalleryAdapter.submitList(listImage)
             }
-            imageFromGalleryAdapter.submitList(getListImageFromGallery())
         }
 
         binding.btSentImage.setOnClickListener {
@@ -164,7 +165,7 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
             binding.progressBar.visibility = View.VISIBLE
             lifecycleScope.launch {
                 viewModel.apply {
-                    sentImage(message.email.toString(),getString(R.string.type_image))
+                    sentImage(message.email.toString(), getString(R.string.type_image))
                     clearListImage()
                     binding.progressBar.visibility = View.GONE
                     getDetailsMessage(message.email.toString())
@@ -173,49 +174,18 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
         }
     }
 
-    private fun getListImageFromGallery(): MutableList<String> {
-        val imageList = mutableListOf<String>()
-        val projection: Array<String> = arrayOf(MediaStore.Images.Media._ID)
-        var mCursor: Cursor? = null
-        try {
-            mCursor = requireActivity().contentResolver.query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null
-            )
-            mCursor?.apply {
-                val index = getColumnIndex(MediaStore.Images.Media._ID)
-                while (moveToNext()) {
-                    val id = getLong(index)
-                    val contentUri =
-                        ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-                    imageList.add(contentUri.toString())
-
-                }
-            }
-        } finally {
-            mCursor?.close()
-        }
-        return imageList
-    }
 
     override fun selectImage(position: Int, uri: String) {
         viewModel.selectImage(uri)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            InfoFieldQuery.REQUEST_GALLERY -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    imageFromGalleryAdapter.submitList(getListImageFromGallery())
-                } else
-                    Toast.makeText(context, getString(R.string.request_gallery), Toast.LENGTH_SHORT)
-                        .show()
+    private val requestPermissionStorage =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                imageFromGalleryAdapter.submitList(listImage)
             }
         }
-    }
-
 }
+
+
+

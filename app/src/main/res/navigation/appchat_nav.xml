@@ -18,7 +18,9 @@
             />
         <action
             android:id="@+id/splash_go_to_HomeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_splashFragment_to_fragmentDetailsMessage"
             app:destination="@id/fragmentDetailsMessage" />
@@ -99,4 +101,9 @@
         android:id="@+id/fragmentEdit"
         android:name="com.example.awesomechat.view.FragmentEditInfoUser"
         android:label="FragmentEditInfoUser" />
+    <fragment
+        android:id="@+id/friendRequestFragment"
+        android:name="com.example.awesomechat.view.tablayoutfriend.FriendRequestFragment"
+        android:label="fragment_friend_request"
+        tools:layout="@layout/fragment_friend_request" />
 </navigation>

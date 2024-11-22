@@ -48,8 +48,6 @@ class InfoFieldQuery {
         const val TYPE_NOTIFY = "type notification"
         const val KEY_DETAILS = "message"
         const val ID_NOTIFY = 200
-
-        const val REQUEST_GALLERY = 10
-
+        const val TYPE_INVITATION = "invitaion"
     }
 }
