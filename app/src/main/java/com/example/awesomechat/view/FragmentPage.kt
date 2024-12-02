@@ -58,9 +58,4 @@ class FragmentPage : Fragment() {
             dialog.show(parentFragmentManager, InfoFieldQuery.DIALOG_SELECT)
         }
     }
-
-    override fun onStart() {
-        super.onStart()
-        viewModelPage.getUrlAndName()
-    }
 }

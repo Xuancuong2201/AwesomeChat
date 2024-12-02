@@ -17,7 +17,7 @@ class PageViewModel @Inject constructor(
     private val interact: InteractAuthentication,
     @ApplicationContext val context: Context
 ) : ViewModel() {
-    val currentUserEmail by lazy { MutableLiveData<String>(interact.emailCurrent) }
+    val currentUserEmail by lazy { MutableLiveData(interact.emailCurrent) }
     val name by lazy { MutableLiveData<String>() }
     val url by lazy { MutableLiveData<String>() }
 
@@ -28,16 +28,6 @@ class PageViewModel @Inject constructor(
             url.postValue(result.url)
         }
     }
-
-    fun getUrlAndName() {
-        viewModelScope.launch {
-            val result = async { DataStoreManager.getSavedInformationUser(context) }.await()
-            url.postValue(result.url)
-            name.postValue(result.name)
-            currentUserEmail.postValue(result.email)
-        }
-    }
-
     fun logOut() {
         viewModelScope.launch {
             interact.signOut()

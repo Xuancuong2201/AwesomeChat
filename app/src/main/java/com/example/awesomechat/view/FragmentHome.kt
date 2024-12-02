@@ -1,8 +1,6 @@
 package com.example.awesomechat.view
 
 import android.os.Bundle
-import android.util.Log
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +11,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.example.awesomechat.R
 import com.example.awesomechat.databinding.FragmentHomeBinding
-import com.example.awesomechat.model.Messages
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

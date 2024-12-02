@@ -39,10 +39,12 @@ import javax.inject.Inject
     }
     fun updateRecordUser() {
         viewModelScope.launch {
-            async {
-                interact.updaterRecordUser(url.value.toString().toUri(), email.value.toString(), name.value.toString(), numberPhone.value.toString(), birthDay.value.toString())
-            }.await()
             val user = User(url.value.toString(), name.value.toString(), email.value.toString(), numberPhone.value.toString(), birthDay.value.toString())
+            async {
+                interact.updaterRecordUser(user) {
+                    result.postValue(it)
+                }
+            }.await()
             url.postValue(user.url)
             name.postValue(user.name)
             DataStoreManager.saveInformationUser(user, context)

@@ -4,19 +4,20 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.interact.InteractAuthentication
-import com.example.awesomechat.interact.InteractUser
+import com.example.awesomechat.model.User
 import com.example.awesomechat.util.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.async
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val interact: InteractAuthentication,
-    private val interactUser: InteractUser,
     @ApplicationContext val context: Context
 ) : ViewModel() {
     val account by lazy { MutableLiveData<String>() }
@@ -33,9 +34,15 @@ class SignUpViewModel @Inject constructor(
         ) {
             if (it) {
                 viewModelScope.launch {
-                    val user = async { interactUser.getRecordUser(email.value.toString()) }.await()
-                    async { DataStoreManager.saveInformationUser(user!!, context) }.await()
-                    async { stateRegister.postValue(true) }.await()
+                    withContext(Dispatchers.IO) {
+                        val user = User(
+                            url = InfoFieldQuery.URL_DEFAULT,
+                            name = account.value.toString(),
+                            email = email.value.toString()
+                        )
+                        DataStoreManager.saveInformationUser(user, context)
+                        stateRegister.postValue(true)
+                    }
                 }
             } else
                 stateRegister.postValue(false)

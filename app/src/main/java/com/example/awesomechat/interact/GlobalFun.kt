@@ -38,10 +38,7 @@ class InteractData {
         fun adjustList(list: List<DetailMessage>): List<DetailMessage> {
             for (i in 0..list.size step 1) {
                 if (i + 1 < list.size) {
-                    if (list[i + 1].sentby == list[i].sentby)
-                        list[i].show = false
-                    else
-                        list[i].show = true
+                    list[i].show = list[i + 1].sentby != list[i].sentby
                 }
             }
             return list

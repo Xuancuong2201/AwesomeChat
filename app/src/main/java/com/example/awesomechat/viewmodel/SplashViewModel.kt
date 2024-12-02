@@ -7,12 +7,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(val interactAu: InteractAuthentication) : ViewModel() {
-    val stateLogin: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-
-    init {
-        stateLogin.postValue(interactAu.checkUserCurrent())
-    }
+class SplashViewModel @Inject constructor(private val interactAu: InteractAuthentication) : ViewModel() {
+    val stateLogin: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(interactAu.checkUserCurrent()) }
     fun updateToken() {
         interactAu.fetchTokenAndUpdate()
     }

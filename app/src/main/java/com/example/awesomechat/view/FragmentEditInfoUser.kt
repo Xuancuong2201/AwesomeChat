@@ -2,8 +2,10 @@ package com.example.awesomechat.view
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
+import android.os.ext.SdkExtensions
+import android.provider.MediaStore.ACTION_PICK_IMAGES
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,7 +49,12 @@ class FragmentEditInfoUser : Fragment() {
             controller.popBackStack()
         }
         binding.btSelectImg.setOnClickListener {
-            launcher.launch(Intent(MediaStore.ACTION_PICK_IMAGES))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && SdkExtensions.getExtensionVersion(
+                    Build.VERSION_CODES.R
+                ) >= 2
+            ) {
+                launcher.launch(Intent(ACTION_PICK_IMAGES))
+            }
         }
         viewModel.name.observe(viewLifecycleOwner) {
             viewModel.checkEnable()

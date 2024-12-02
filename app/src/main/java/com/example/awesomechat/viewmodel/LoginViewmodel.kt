@@ -10,7 +10,6 @@ import com.example.awesomechat.util.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -31,10 +30,9 @@ class LoginViewmodel @Inject constructor(
             if (it) {
                 viewModelScope.launch {
                     withContext(Dispatchers.IO) {
-                        val user =
-                            async { interactUser.getRecordUser(email.value.toString()) }.await()
-                        async { DataStoreManager.saveInformationUser(user!!, context) }.await()
-                        async { stateLogin.postValue(true) }.await()
+                        val user = interactUser.getRecordUser(email.value.toString())
+                        DataStoreManager.saveInformationUser(user!!, context)
+                        stateLogin.postValue(true)
                     }
                 }
             } else
@@ -45,5 +43,4 @@ class LoginViewmodel @Inject constructor(
     fun checkEnable() {
         result.value = !(email.value.isNullOrEmpty() || password.value.isNullOrEmpty())
     }
-
 }

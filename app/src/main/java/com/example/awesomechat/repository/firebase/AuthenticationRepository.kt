@@ -112,7 +112,7 @@ class AuthenticationRepository @Inject constructor(
             val idUser = fetchIdUser()
             if (idUser != null) {
                 db.collection(InfoFieldQuery.COLLECTION_USER).document(idUser)
-                    .update("token", token).await()
+                    .update(InfoFieldQuery.KEY_TOKEN, token).await()
             }
         }
     }

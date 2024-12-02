@@ -155,13 +155,12 @@
                 android:id="@+id/edt_Birthday"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height_edittext"
-
                 android:layout_marginStart="@dimen/margin_25dp"
                 android:layout_marginEnd="@dimen/margin_25dp"
                 android:autofillHints="null"
                 android:drawableEnd="@drawable/icon_birthday"
                 android:hint="@string/dd_mm_yyyy"
-                android:inputType="date"
+
                 android:text="@={viewmodel.birthDay}"
                 app:layout_constraintBottom_toTopOf="@+id/guideline3"
                 app:layout_constraintTop_toBottomOf="@+id/birthday" />

@@ -1,19 +1,12 @@
 package com.example.awesomechat.interact
 
-import android.net.Uri
 import com.example.awesomechat.model.User
 
 interface InteractUser {
     val emailCurrent: String
     fun updaterRecordUser(
-        imageUri: Uri?,
-        email: String,
-        name: String,
-        numberPhone: String,
-        birthDay: String
+        user: User, callBack: (Boolean) -> Unit
     )
-
-    suspend fun getRecordUser(email: String): User?
-    suspend fun getUrlUser(email: String): String?
+    suspend fun getRecordUser(email: String ): User?
     fun signOut()
 }
