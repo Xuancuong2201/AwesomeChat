@@ -111,6 +111,7 @@
                 android:autofillHints="name"
                 android:drawableEnd="@drawable/icon_user"
                 android:inputType="text"
+                android:hint="@string/name"
                 android:text="@={viewmodel.name}"
                 app:layout_constraintBottom_toTopOf="@id/tv_phone"
                 app:layout_constraintTop_toBottomOf="@id/tv_Name" />
@@ -134,6 +135,7 @@
                 android:layout_marginStart="@dimen/margin_25dp"
                 android:layout_marginEnd="@dimen/margin_25dp"
                 android:autofillHints="phone"
+                android:hint="@string/number_phone"
                 android:drawableEnd="@drawable/icon_phone"
                 android:inputType="phone"
                 android:text="@={viewmodel.numberPhone}"
@@ -160,7 +162,7 @@
                 android:autofillHints="null"
                 android:drawableEnd="@drawable/icon_birthday"
                 android:hint="@string/dd_mm_yyyy"
-
+                android:inputType="datetime"
                 android:text="@={viewmodel.birthDay}"
                 app:layout_constraintBottom_toTopOf="@+id/guideline3"
                 app:layout_constraintTop_toBottomOf="@+id/birthday" />

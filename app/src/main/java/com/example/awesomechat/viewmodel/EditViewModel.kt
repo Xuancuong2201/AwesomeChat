@@ -1,7 +1,6 @@
 package com.example.awesomechat.viewmodel
 
 import android.content.Context
-import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

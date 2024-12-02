@@ -1,6 +1,5 @@
 package com.example.awesomechat.repository.firebase
 
-import android.util.Log
 import androidx.core.net.toUri
 import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.interact.InteractUser
