@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.example.awesomechat.R
@@ -14,15 +13,11 @@ import com.example.awesomechat.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentHome : Fragment() {
-    private lateinit var binding: FragmentHomeBinding
+class FragmentHome : FragmentBase<FragmentHomeBinding>() {
     private lateinit var navHostFragment: NavHostFragment
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentHomeBinding.inflate(inflater)
-        return binding.root
+
+    override fun getFragmentView(): Int {
+        return R.layout.fragment_home
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

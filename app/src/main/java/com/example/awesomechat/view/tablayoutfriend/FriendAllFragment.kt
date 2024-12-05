@@ -4,20 +4,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.awesomechat.R
 import com.example.awesomechat.adapter.FriendAdapter
 import com.example.awesomechat.databinding.FragmentFriendAllBinding
 import com.example.awesomechat.interact.InteractData
+import com.example.awesomechat.interact.InteractFriend
+import com.example.awesomechat.view.FragmentBase
 import com.example.awesomechat.viewmodel.FriendViewModel
 import com.example.awesomechat.viewmodel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class FriendAllFragment : Fragment() {
-    private lateinit var binding: FragmentFriendAllBinding
+class FriendAllFragment : FragmentBase<FragmentFriendAllBinding>() {
+    @Inject
+    lateinit var interactFriend: InteractFriend
     private lateinit var adapter: FriendAdapter
     private val viewModel: FriendViewModel by viewModels<FriendViewModel>()
     private val searchViewModel: SearchViewModel by activityViewModels<SearchViewModel>()
@@ -25,10 +29,13 @@ class FriendAllFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFriendAllBinding.inflate(inflater)
-        binding.lifecycleOwner = viewLifecycleOwner
-        adapter = FriendAdapter(viewModel)
+        super.onCreateView(inflater, container, savedInstanceState)
+        adapter = FriendAdapter(interactFriend)
         return binding.root
+    }
+
+    override fun getFragmentView(): Int {
+        return R.layout.fragment_friend_all
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

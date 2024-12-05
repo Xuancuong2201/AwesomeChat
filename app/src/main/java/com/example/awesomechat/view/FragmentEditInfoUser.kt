@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -25,8 +24,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class FragmentEditInfoUser : Fragment() {
-    private lateinit var binding: FragmentEditInforUserBinding
+class FragmentEditInfoUser : FragmentBase<FragmentEditInforUserBinding>() {
+
     private lateinit var controller: NavController
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private val viewModel: EditViewModel by viewModels()
@@ -34,13 +33,15 @@ class FragmentEditInfoUser : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =
-            FragmentEditInforUserBinding.inflate(inflater)
-        binding.lifecycleOwner = viewLifecycleOwner
+        super.onCreateView(inflater, container, savedInstanceState)
         binding.viewmodel = viewModel
         controller = findNavController()
         openGallery()
         return binding.root
+    }
+
+    override fun getFragmentView(): Int {
+        return R.layout.fragment_edit_infor_user
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

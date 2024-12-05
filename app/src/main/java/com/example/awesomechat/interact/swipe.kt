@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
 import androidx.recyclerview.widget.RecyclerView
 
 class Swipe( context: Context) : ItemTouchHelper.Callback() {
-    private val limitScrollX= dipToPx(85f,context)
+    private val limitScrollX= dipToPx(context)
     private var currentScrollX=0
     private var currentScrollXWhenInActive =0
     private var initXWhenInActive =0f
@@ -74,7 +74,7 @@ class Swipe( context: Context) : ItemTouchHelper.Callback() {
         return Integer.MAX_VALUE.toFloat()
     }
     //Convert to Px
-    private fun dipToPx(value :Float, context: Context):Int {
-        return (value * context.resources.displayMetrics.density).toInt()
+    private fun dipToPx( context: Context):Int {
+        return (85f * context.resources.displayMetrics.density).toInt()
     }
 }

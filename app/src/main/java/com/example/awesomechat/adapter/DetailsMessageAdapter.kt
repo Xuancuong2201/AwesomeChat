@@ -1,5 +1,6 @@
 package com.example.awesomechat.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +14,11 @@ import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.model.DetailMessage
 import com.example.awesomechat.viewmodel.DetailsMessageViewModel
 
-class DetailsMessageAdapter(val viewmodel: DetailsMessageViewModel) :
+class DetailsMessageAdapter(private  val url:String) :
     ListAdapter<DetailMessage, RecyclerView.ViewHolder>(DetailsMessageCallBack()) {
     class ItemMessageRecipient(
         private val itemRecipient: ItemMessageRecipientBinding,
-        private val viewmodel: DetailsMessageViewModel
+        private val url: String
     ) : RecyclerView.ViewHolder(itemRecipient.root) {
         private var multiImageAdapter = MultiImageAdapter()
         fun bind(item: DetailMessage) {
@@ -35,7 +36,7 @@ class DetailsMessageAdapter(val viewmodel: DetailsMessageViewModel) :
                     multiImageAdapter.submitList(item.multiImage)
                 }
             }
-            itemRecipient.viewmodel = viewmodel
+            itemRecipient.url = url
         }
     }
 
@@ -68,7 +69,7 @@ class DetailsMessageAdapter(val viewmodel: DetailsMessageViewModel) :
                     LayoutInflater.from(parent.context),
                     parent,
                     false
-                ), viewmodel
+                ), url = url
             )
 
             2 -> ItemMessageUser(

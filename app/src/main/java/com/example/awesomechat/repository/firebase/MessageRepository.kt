@@ -278,6 +278,7 @@ class MessageRepository @Inject constructor(
                 .whereEqualTo(InfoFieldQuery.KEY_TYPE, InfoFieldQuery.TYPE_DOUBLE).get().await()
         val idMess = idMessQuerySnapshot.documents.filter { document ->
             val users = document.get(InfoFieldQuery.KEY_USER) as? List<String> ?: emptyList()
+
             listOf(idUser, idRecipient).all { it in users }
         }.map { it.id }
         return if (idMess.isNotEmpty()) idMess[0] else null

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -19,26 +18,28 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class FragmentPage : Fragment() {
-    private lateinit var binding: FragmentPageBinding
+class FragmentPage : FragmentBase<FragmentPageBinding>() {
     private lateinit var controller: NavController
     private lateinit var mainActivity: MainActivity
     private val viewModelPage: PageViewModel by viewModels()
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
         mainActivity = requireActivity() as MainActivity
-        binding = FragmentPageBinding.inflate(inflater)
-        binding.lifecycleOwner = viewLifecycleOwner
         binding.viewmodel = viewModelPage
-        controller = findNavController()
         return binding.root
     }
-
+    override fun getFragmentView(): Int {
+        return R.layout.fragment_page
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.imgPersonalMini.setOnClickListener{
+        controller = findNavController()
+        binding.imgPersonalMini.setOnClickListener {
             val dialog = DialogLogout.newInstance {
                 if (it) viewModelPage.logOut()
             }
@@ -48,7 +49,11 @@ class FragmentPage : Fragment() {
             val navController = (activity as MainActivity).findNavController(R.id.fragment)
             navController.navigate(R.id.action_homeFragment_to_fragmentEdit2)
         }
-        if (mainActivity.sharedPref.getString(InfoFieldQuery.LANGUAGE, InfoFieldQuery.VIETNAM)!! == InfoFieldQuery.VIETNAM)
+        if (mainActivity.sharedPref.getString(
+                InfoFieldQuery.LANGUAGE,
+                InfoFieldQuery.VIETNAM
+            )!! == InfoFieldQuery.VIETNAM
+        )
             binding.tvLanguageSelected.text = getString(R.string.vietnamese)
         else
             binding.tvLanguageSelected.text = getString(R.string.english)

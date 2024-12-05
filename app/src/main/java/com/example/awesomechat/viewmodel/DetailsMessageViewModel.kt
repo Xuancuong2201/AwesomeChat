@@ -65,6 +65,7 @@ class DetailsMessageViewModel @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             interactMessage.sentMessage(recipient, content)
             sendNotificationMessage(recipient, content)
+            getDetailsMessage(recipient)
         }
     }
 

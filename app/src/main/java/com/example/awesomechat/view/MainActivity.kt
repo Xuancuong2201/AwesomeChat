@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity() {
         this.setContentView(R.layout.activity_main)
         sharedPref = getSharedPreferences(InfoFieldQuery.CHANGE_LANGUAGE, Context.MODE_PRIVATE)
         setLanguage()
-
     }
 
     private fun setLanguage() {

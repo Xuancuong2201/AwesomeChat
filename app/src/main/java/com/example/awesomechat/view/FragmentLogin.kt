@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -22,21 +21,20 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class FragmentLogin : Fragment() {
+class FragmentLogin : FragmentBase<FragmentLoginBinding>() {
     private val viewModel: LoginViewmodel by viewModels()
-    private lateinit var binding: FragmentLoginBinding
     private lateinit var controller: NavController
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentLoginBinding.inflate(inflater)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewmodel = viewModel
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
         controller = findNavController()
+        binding.viewmodel = viewModel
         return binding.root
     }
+    override fun getFragmentView(): Int = R.layout.fragment_login
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -68,6 +66,7 @@ class FragmentLogin : Fragment() {
                     binding.tvStatus.text = getString(R.string.signIn1)
                     dialog.show(childFragmentManager, InfoFieldQuery.DIALOG_CONFIRM)
                 }
+
                 null -> Log.e("Error", "OK")
             }
         }

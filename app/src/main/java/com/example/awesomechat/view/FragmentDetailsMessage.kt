@@ -5,13 +5,13 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -28,13 +28,14 @@ import com.example.awesomechat.interact.InteractData.Companion.adjustList
 import com.example.awesomechat.model.Messages
 import com.example.awesomechat.viewmodel.DetailsMessageViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
-class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInterface {
-    private lateinit var binding: FragmentDetailsMessageBinding
+class FragmentDetailsMessage : FragmentBase<FragmentDetailsMessageBinding>(),
+    ImageFromGalleryAdapter.ImageClickInterface {
     private lateinit var detailsMessageAdapter: DetailsMessageAdapter
     private lateinit var imageFromGalleryAdapter: ImageFromGalleryAdapter
     private lateinit var controller: NavController
@@ -57,12 +58,15 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        detailsMessageAdapter = DetailsMessageAdapter(viewModel)
+        super.onCreateView(inflater, container, savedInstanceState)
+        detailsMessageAdapter = DetailsMessageAdapter(message.url.toString()    )
         imageFromGalleryAdapter = ImageFromGalleryAdapter(this)
-        binding = FragmentDetailsMessageBinding.inflate(inflater)
-        binding.lifecycleOwner = viewLifecycleOwner
         binding.viewmodel = viewModel
         return binding.root
+    }
+
+    override fun getFragmentView(): Int {
+        return R.layout.fragment_details_message
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -182,7 +186,12 @@ class FragmentDetailsMessage : Fragment(), ImageFromGalleryAdapter.ImageClickInt
     private val requestPermissionStorage =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                imageFromGalleryAdapter.submitList(listImage)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val newList = viewModel.getListImageFromGallery()
+                    withContext(Dispatchers.Main){
+                            imageFromGalleryAdapter.submitList(newList)
+                    }
+                }
             }
         }
 }

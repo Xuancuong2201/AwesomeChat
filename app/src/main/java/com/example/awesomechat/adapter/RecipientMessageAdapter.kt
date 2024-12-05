@@ -10,25 +10,22 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.awesomechat.databinding.ItemMessageRecipientSelectBinding
 import com.example.awesomechat.model.User
-import com.example.awesomechat.viewmodel.CreateMessViewModel
 
-class RecipientMessageAdapter(val viewModel: CreateMessViewModel) :
+class RecipientMessageAdapter(private var listener: ItemClickListener) :
     ListAdapter<User, RecyclerView.ViewHolder>(IUserDiffUtil()), Filterable {
     private var originalList: List<User> = emptyList()
 
     class ItemUser(
         private val itemBinding: ItemMessageRecipientSelectBinding,
-        val viewModel: CreateMessViewModel,
-        val adapter: RecipientMessageAdapter
+        val adapter: RecipientMessageAdapter,
+        private val listener: ItemClickListener
     ) : RecyclerView.ViewHolder(itemBinding.root) {
+
         fun bind(item: User, position: Int) {
             itemBinding.user = item
-            itemBinding.cbSelect.isChecked = (position == viewModel.position.value)
+            itemBinding.cbSelect.isChecked = item.checked
             itemBinding.frameRecipientSelect.setOnClickListener {
-                val isChecked = itemBinding.cbSelect.isChecked
-                itemBinding.cbSelect.isChecked = !isChecked
-                viewModel.user.postValue(if (isChecked) null else item)
-                viewModel.position.postValue(if (isChecked) -1 else position)
+                listener.onItemClick(position, item)
             }
         }
     }
@@ -39,7 +36,7 @@ class RecipientMessageAdapter(val viewModel: CreateMessViewModel) :
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ), viewModel, this
+            ), this, listener
         )
     }
 
@@ -84,6 +81,11 @@ class RecipientMessageAdapter(val viewModel: CreateMessViewModel) :
         originalList = list
         submitList(list)
     }
+
+    interface ItemClickListener {
+        fun onItemClick(position: Int, item: User)
+    }
+
 }
 
 class IUserDiffUtil : DiffUtil.ItemCallback<User>() {

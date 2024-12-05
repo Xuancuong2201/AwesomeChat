@@ -3,10 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
-            name="viewmodel"
-            type="com.example.awesomechat.viewmodel.DetailsMessageViewModel" />
+            name="url"
+            type="String" />
 
         <variable
             name="message"
@@ -21,7 +20,7 @@
 
         <ImageView
             android:id="@+id/img_recipient"
-            imageUrlPerson="@{viewmodel.imageUrl}"
+            imageUrlPerson="@{url}"
             android:layout_width="@dimen/size_image_detail_message"
             android:layout_height="@dimen/size_image_detail_message"
             android:layout_marginStart="@dimen/margin_12dp"

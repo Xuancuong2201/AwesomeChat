@@ -4,21 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.awesomechat.R
 import com.example.awesomechat.adapter.RecipientMessageAdapter
 import com.example.awesomechat.databinding.FragmentCreateMessBinding
 import com.example.awesomechat.model.Messages
+import com.example.awesomechat.model.User
 import com.example.awesomechat.viewmodel.CreateMessViewModel
 import com.example.awesomechat.viewmodel.FriendViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentCreateMess : Fragment() {
-    private lateinit var binding: FragmentCreateMessBinding
+class FragmentCreateMess : FragmentBase<FragmentCreateMessBinding>() {
     private lateinit var adapterRecipient: RecipientMessageAdapter
     private lateinit var controller: NavController
     private val viewModelFriend: FriendViewModel by viewModels()
@@ -28,13 +28,20 @@ class FragmentCreateMess : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
         controller = findNavController()
-        adapterRecipient = RecipientMessageAdapter(viewModelCreateMess)
-        binding = FragmentCreateMessBinding.inflate(inflater)
-        binding.lifecycleOwner = viewLifecycleOwner
+        adapterRecipient =
+            RecipientMessageAdapter(object : RecipientMessageAdapter.ItemClickListener {
+                override fun onItemClick(position: Int, item: User) {
+                    viewModelCreateMess.user.postValue(item)
+                    viewModelFriend.friendList.value?.get(position)!!.checked = true
+                    adapterRecipient.submitList(viewModelFriend.friendList.value)
+                }
+            })
         return binding.root
     }
 
+    override fun getFragmentView(): Int = R.layout.fragment_create_mess
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModelFriend.friendList.observe(viewLifecycleOwner) { it ->

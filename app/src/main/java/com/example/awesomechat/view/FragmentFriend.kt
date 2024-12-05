@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.awesomechat.R
@@ -18,8 +17,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentFriend : Fragment() {
-    private lateinit var binding: FragmentFriendBinding
+class FragmentFriend : FragmentBase<FragmentFriendBinding>() {
     private lateinit var customView: View
     private lateinit var adapter: FragmentPageAdapter
     private val searchViewModel: SearchViewModel by activityViewModels<SearchViewModel>()
@@ -28,7 +26,7 @@ class FragmentFriend : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFriendBinding.inflate(inflater)
+        super.onCreateView(inflater, container, savedInstanceState)
         adapter = FragmentPageAdapter(childFragmentManager, lifecycle)
         binding.viewPagerFriend.adapter = adapter
         binding.viewPagerFriend.offscreenPageLimit = 3
@@ -42,6 +40,10 @@ class FragmentFriend : Fragment() {
         customView = LayoutInflater.from(requireContext()).inflate(R.layout.tab_request, null)
         binding.tabLayoutFriend.getTabAt(2)?.customView = customView
         return binding.root
+    }
+
+    override fun getFragmentView(): Int {
+        return R.layout.fragment_friend
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

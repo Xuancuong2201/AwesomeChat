@@ -9,5 +9,6 @@ data class User(
     val numberphone: String = "",
     val birthday: String = "",
     var state: String = "",
-    val token: String = ""
+    val token: String = "",
+    var checked:Boolean=false
 ) : Serializable

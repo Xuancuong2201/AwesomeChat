@@ -1,7 +1,6 @@
 package com.example.awesomechat.adapter
 
 import android.graphics.Typeface
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -87,10 +86,11 @@ class MessagesAdapter(private val listener: ItemClickListener) :
 
     class MessagesCallback : DiffUtil.ItemCallback<Messages>() {
         override fun areItemsTheSame(oldItem: Messages, newItem: Messages): Boolean {
-            return oldItem.currentMessage == newItem.currentMessage && oldItem.quantity ==newItem.quantity
+            return oldItem.currentMessage == newItem.currentMessage && oldItem.quantity == newItem.quantity
         }
+
         override fun areContentsTheSame(oldItem: Messages, newItem: Messages): Boolean {
-            return oldItem==newItem
+            return oldItem == newItem
         }
     }
 
@@ -112,6 +112,7 @@ class MessagesAdapter(private val listener: ItemClickListener) :
                 results.values = filteredList
                 return results
             }
+
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 val values = results?.values
                 if (values is List<*>) {

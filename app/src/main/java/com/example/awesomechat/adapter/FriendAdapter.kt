@@ -14,16 +14,20 @@ import com.example.awesomechat.databinding.ItemFriendBinding
 import com.example.awesomechat.databinding.ItemHeaderBinding
 import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.interact.InteractData
+import com.example.awesomechat.interact.InteractFriend
 import com.example.awesomechat.model.User
-import com.example.awesomechat.viewmodel.FriendViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FriendAdapter(val viewmodel: FriendViewModel) :
+class FriendAdapter @Inject constructor(private val listener: InteractFriend) :
     ListAdapter<Any, RecyclerView.ViewHolder>(FriendDiffCallback()), Filterable {
     private var originalList: List<Any> = emptyList()
 
     class ItemUser(
         private val itemBinding: ItemFriendBinding,
-        private val viewmodel: FriendViewModel
+        private val listener: InteractFriend
     ) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(item: User) {
             itemBinding.user = item
@@ -39,7 +43,10 @@ class FriendAdapter(val viewmodel: FriendViewModel) :
                     )
                     setBackgroundResource(R.drawable.custom_button_sented)
                     setOnClickListener {
-                        viewmodel.cancelRequestFriend(item.email)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            listener.cancelRequestFriend(item.email)
+                        }
+
                     }
                 }
 
@@ -47,17 +54,24 @@ class FriendAdapter(val viewmodel: FriendViewModel) :
                     itemBinding.btSelect.apply {
                         text = context.getString(R.string.add)
                         setOnClickListener {
-                            viewmodel.sendRequestFriend(item.email)
+                            CoroutineScope(Dispatchers.IO).launch {
+                                listener.sendRequestFriend(item.email)
+                            }
                         }
                     }
                 }
 
                 InfoFieldQuery.STATE_INVITATION -> {
                     itemBinding.btDelete.setOnClickListener {
-                        viewmodel.refuseInvitationFriend(item.email)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            listener.refuseInvitationFriend(item.email)
+                        }
+
                     }
                     itemBinding.btSelect.setOnClickListener {
-                        viewmodel.acceptInvitationFriend(item.email)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            listener.refuseInvitationFriend(item.email)
+                        }
                     }
                 }
             }
@@ -78,7 +92,7 @@ class FriendAdapter(val viewmodel: FriendViewModel) :
                     LayoutInflater.from(parent.context),
                     parent,
                     false
-                ), viewmodel
+                ), listener
             )
 
             InteractData.TYPE_HEADER -> ItemHeader(

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -21,23 +20,23 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class FragmentSignUp : Fragment() {
-    private lateinit var binding: FragmentSignUpBinding
+class FragmentSignUp : FragmentBase<FragmentSignUpBinding>() {
     private lateinit var controller: NavController
     private val viewModel: SignUpViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSignUpBinding.inflate(inflater)
-        binding.lifecycleOwner = viewLifecycleOwner
+        super.onCreateView(inflater, container, savedInstanceState)
         binding.viewmodel = viewModel
-        controller = findNavController()
         return binding.root
     }
 
+    override fun getFragmentView(): Int = R.layout.fragment_sign_up
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        controller = findNavController()
         binding.btnBack.setOnClickListener {
             controller.navigate(R.id.action_signUpFragment_to_loginFragment)
         }

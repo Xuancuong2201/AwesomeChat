@@ -11,5 +11,4 @@ import javax.inject.Inject
 class CreateMessViewModel @Inject constructor() : ViewModel() {
     val user: MutableLiveData<User> by lazy { MutableLiveData<User>() }
     val position: MutableLiveData<Int> by lazy { MutableLiveData<Int>(-1) }
-
 }
