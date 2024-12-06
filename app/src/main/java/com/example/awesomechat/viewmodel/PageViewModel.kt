@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.awesomechat.interact.InteractAuthentication
+import com.example.awesomechat.model.User
 import com.example.awesomechat.util.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,14 +24,21 @@ class PageViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val result = async { DataStoreManager.getSavedInformationUser(context) }.await()
-            name.postValue(result.name)
-            url.postValue(result.url)
+            updateUser()
         }
     }
     fun logOut() {
         viewModelScope.launch {
+            DataStoreManager.saveInformationUser(User(), context)
             interact.signOut()
         }
+    }
+    fun updateUser(){
+        viewModelScope.launch {
+            val result = async { DataStoreManager.getSavedInformationUser(context) }.await()
+            name.postValue(result.name)
+            url.postValue(result.url)
+        }
+
     }
 }

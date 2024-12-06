@@ -5,15 +5,11 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.awesomechat.R
 import com.example.awesomechat.adapter.MessagesAdapter
@@ -26,7 +22,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FragmentMessage : FragmentBase<FragmentMessageBinding>() {
     private lateinit var adapter: MessagesAdapter
-    private lateinit var controller: NavController
     private val viewModel: ChatViewModel by viewModels()
 
     override fun getFragmentView(): Int {
@@ -35,12 +30,11 @@ class FragmentMessage : FragmentBase<FragmentMessageBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        controller = (activity as MainActivity).findNavController(R.id.fragment)
         adapter = MessagesAdapter(object : MessagesAdapter.ItemClickListener {
             override fun onItemClick(position: Int, messages: Messages) {
                 val action =
                     FragmentHomeDirections.actionHomeFragmentToFragmentDetailsMessage(messages)
-                controller.navigate(action)
+                controllerRoot.navigate(action)
                 viewModel.changeStatus(messages.email.toString())
             }
         })
@@ -53,7 +47,7 @@ class FragmentMessage : FragmentBase<FragmentMessageBinding>() {
             adapter.submitList(it.toList())
         }
         binding.btnCreateMessage.setOnClickListener {
-            controller.navigate(R.id.action_homeFragment_to_fragmentCreateMess)
+            controllerRoot.navigate(R.id.action_homeFragment_to_fragmentCreateMess)
         }
         requestPermissionNotification()
     }

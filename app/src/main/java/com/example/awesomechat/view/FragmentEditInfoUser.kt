@@ -6,14 +6,10 @@ import android.os.Build
 import android.os.Bundle
 import android.os.ext.SdkExtensions
 import android.provider.MediaStore.ACTION_PICK_IMAGES
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import com.example.awesomechat.R
 import com.example.awesomechat.databinding.FragmentEditInforUserBinding
 import com.example.awesomechat.dialog.DialogConfirm
@@ -25,20 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FragmentEditInfoUser : FragmentBase<FragmentEditInforUserBinding>() {
-
-    private lateinit var controller: NavController
-    private lateinit var launcher: ActivityResultLauncher<Intent>
     private val viewModel: EditViewModel by viewModels()
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        binding.viewmodel = viewModel
-        controller = findNavController()
-        openGallery()
-        return binding.root
-    }
 
     override fun getFragmentView(): Int {
         return R.layout.fragment_edit_infor_user
@@ -46,8 +29,9 @@ class FragmentEditInfoUser : FragmentBase<FragmentEditInforUserBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setViewModelForBinding(viewModel)
         binding.btnBack.setOnClickListener {
-            controller.popBackStack()
+            controllerRoot.popBackStack()
         }
         binding.btSelectImg.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && SdkExtensions.getExtensionVersion(
@@ -79,7 +63,7 @@ class FragmentEditInfoUser : FragmentBase<FragmentEditInforUserBinding>() {
         binding.btnSave.setOnClickListener {
             if (viewModel.result.value == true) {
                 viewModel.updateRecordUser()
-                controller.popBackStack()
+                controllerRoot.popBackStack()
             } else {
                 val dialog = DialogConfirm.newInstance(getString(R.string.edit_fail))
                 dialog.show(childFragmentManager, InfoFieldQuery.DIALOG_CONFIRM)
@@ -87,13 +71,11 @@ class FragmentEditInfoUser : FragmentBase<FragmentEditInforUserBinding>() {
         }
     }
 
-    private fun openGallery() {
-        launcher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                if (it.resultCode == Activity.RESULT_OK) {
-                    binding.imgPersonalMini.setImageURI(it.data?.data)
-                    viewModel.url.postValue(it.data?.data.toString())
-                }
+    private var launcher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                binding.imgPersonalMini.setImageURI(it.data?.data)
+                viewModel.url.postValue(it.data?.data.toString())
             }
-    }
+        }
 }

@@ -5,18 +5,12 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.awesomechat.api.NotificationAPI
 import com.example.awesomechat.interact.InfoFieldQuery
 import com.example.awesomechat.interact.InteractFriend
-import com.example.awesomechat.interact.InteractMessage
-import com.example.awesomechat.model.Notification
-import com.example.awesomechat.model.NotificationData
 import com.example.awesomechat.model.User
 import com.example.awesomechat.util.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,7 +18,6 @@ import javax.inject.Inject
 @HiltViewModel
 class FriendViewModel @Inject constructor(
     private val interactFriend: InteractFriend,
-    private val interactMessage: InteractMessage,
     @ApplicationContext val context: Context
 ) :
     ViewModel() {
@@ -33,8 +26,8 @@ class FriendViewModel @Inject constructor(
     val friendList by lazy { MutableLiveData<List<User>>() }
     val invitationList by lazy { MutableLiveData<List<User>>() }
     val quantityRequest by lazy { MutableLiveData<Int>() }
-    val userRemainList by lazy { MutableLiveData<List<User>>() }
-    val allUserList by lazy { MediatorLiveData<List<User>>() }
+    private val userRemainList by lazy { MutableLiveData<List<User>>() }
+    private val allUserList by lazy { MediatorLiveData<List<User>>() }
 
     init {
         viewModelScope.launch {
@@ -100,47 +93,4 @@ class FriendViewModel @Inject constructor(
         return allUserList
     }
 
-    fun refuseInvitationFriend(sideA: String) {
-        viewModelScope.launch {
-            interactFriend.refuseInvitationFriend(sideA)
-        }
-    }
-
-    fun cancelRequestFriend(sideB: String) {
-        viewModelScope.launch {
-            interactFriend.cancelRequestFriend(sideB)
-        }
-    }
-
-    fun sendRequestFriend(sideB: String) {
-        viewModelScope.launch {
-            interactFriend.sendRequestFriend(sideB)
-            sendNotificationInvitation(sideB)
-        }
-    }
-
-    fun acceptInvitationFriend(sideA: String) {
-        viewModelScope.launch {
-            interactFriend.acceptInvitationFriend(sideA)
-        }
-    }
-
-    private fun sendNotificationInvitation(recipient: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val token = interactMessage.getTokenUser(recipient)
-            if (token != null) {
-                val notification = Notification(
-                    message = NotificationData(
-                        token, hashMapOf(
-                            InfoFieldQuery.KEY_TITLE to user.name,
-                            InfoFieldQuery.KEY_IMG to user.url,
-                            InfoFieldQuery.KEY_EMAIL to user.email,
-                            InfoFieldQuery.TYPE_NOTIFY to InfoFieldQuery.TYPE_INVITATION
-                        )
-                    )
-                )
-                NotificationAPI.sendNotification().notification(notification).execute()
-            }
-        }
-    }
 }

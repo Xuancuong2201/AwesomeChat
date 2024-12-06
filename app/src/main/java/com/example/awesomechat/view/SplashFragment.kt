@@ -1,13 +1,11 @@
 package com.example.awesomechat.view
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.example.awesomechat.R
+import com.example.awesomechat.databinding.FragmentSplashBinding
 import com.example.awesomechat.viewmodel.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -18,20 +16,15 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class SplashFragment @Inject constructor() : Fragment() {
+class SplashFragment @Inject constructor() : FragmentBase<FragmentSplashBinding>() {
     private val viewModel: SplashViewModel by viewModels()
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_splash, container, false)
-        return view
-    }
+
+    override fun getFragmentView(): Int = R.layout.fragment_splash
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        CoroutineScope(Dispatchers.Main).launch(Dispatchers.Main) {
-            delay(2000)
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(1500)
             viewModel.stateLogin.observe(viewLifecycleOwner) { isLoggedIn ->
                 try {
                     val action =

@@ -2,6 +2,7 @@ package com.example.awesomechat.view
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.awesomechat.R
@@ -16,18 +17,22 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_main)
-        sharedPref = getSharedPreferences(InfoFieldQuery.CHANGE_LANGUAGE, Context.MODE_PRIVATE)
-        setLanguage()
     }
 
-    private fun setLanguage() {
-        val configuration = resources.configuration
-        val myLang = sharedPref.getString(InfoFieldQuery.LANGUAGE, InfoFieldQuery.VIETNAM)!!
-        val locale = Locale(myLang)
-        Locale.setDefault(locale)
-        configuration.setLocale(locale)
-        createConfigurationContext(configuration)
-        resources.updateConfiguration(configuration, resources.displayMetrics)
-    }
+    override fun attachBaseContext(newBase: Context?) {
+        if (newBase != null) {
+            sharedPref =
+                newBase.getSharedPreferences(InfoFieldQuery.CHANGE_LANGUAGE, Context.MODE_PRIVATE)
+            val myLang = sharedPref.getString(InfoFieldQuery.LANGUAGE, InfoFieldQuery.ENGLISH)!!
+            val configuration = Configuration(newBase.resources.configuration)
+            configuration.setLocale(Locale(myLang))
 
+            val updatedContext = newBase.createConfigurationContext(configuration)
+
+            super.attachBaseContext(updatedContext)
+        } else
+            super.attachBaseContext(null)
+
+
+    }
 }

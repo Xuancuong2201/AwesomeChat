@@ -1,6 +1,8 @@
 package com.example.awesomechat.viewmodel
 
 import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,8 +25,11 @@ class LoginViewmodel @Inject constructor(
 ) : ViewModel() {
     val email by lazy { MutableLiveData<String>() }
     val password by lazy { MutableLiveData<String>() }
-    val result by lazy { MutableLiveData(false) }
     val stateLogin: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val result: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {
+        addSource(email) { value = !email.value.isNullOrEmpty() && !password.value.isNullOrEmpty() }
+        addSource(password) { value = !email.value.isNullOrEmpty() && !password.value.isNullOrEmpty() }
+    }
     fun login() {
         interactAu.login(email.value.toString(), password.value.toString()) {
             if (it) {
@@ -40,7 +45,4 @@ class LoginViewmodel @Inject constructor(
         }
     }
 
-    fun checkEnable() {
-        result.value = !(email.value.isNullOrEmpty() || password.value.isNullOrEmpty())
-    }
 }

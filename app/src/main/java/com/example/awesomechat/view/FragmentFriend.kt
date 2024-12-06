@@ -37,7 +37,9 @@ class FragmentFriend : FragmentBase<FragmentFriendBinding>() {
                 2 -> tab.setText(R.string.request)
             }
         }.attach()
-        customView = LayoutInflater.from(requireContext()).inflate(R.layout.tab_request, null)
+
+        customView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.tab_request, container, false)
         binding.tabLayoutFriend.getTabAt(2)?.customView = customView
         return binding.root
     }

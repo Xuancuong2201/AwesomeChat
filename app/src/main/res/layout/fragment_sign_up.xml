@@ -143,6 +143,7 @@
             android:layout_marginTop="@dimen/margin_38dp"
             android:layout_marginEnd="@dimen/margin_fragment"
             android:background="@color/no_focus"
+            app:isValidInput="@{viewmodel.result}"
             android:gravity="center"
             app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toEndOf="parent"

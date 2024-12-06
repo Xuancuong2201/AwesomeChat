@@ -1,9 +1,7 @@
 package com.example.awesomechat.view.tablayoutfriend
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -27,15 +25,6 @@ class FriendRequestFragment : FragmentBase<FragmentFriendRequestBinding>() {
     private lateinit var adapterRequest: FriendAdapter
     private val viewModel: FriendViewModel by viewModels<FriendViewModel>()
     private val searchViewModel: SearchViewModel by activityViewModels<SearchViewModel>()
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        adapter = FriendAdapter(interactFriend)
-        adapterRequest = FriendAdapter(interactFriend)
-        return binding.root
-    }
 
     override fun getFragmentView(): Int {
         return R.layout.fragment_friend_request
@@ -43,6 +32,8 @@ class FriendRequestFragment : FragmentBase<FragmentFriendRequestBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        adapter = FriendAdapter(interactFriend)
+        adapterRequest = FriendAdapter(interactFriend)
         viewModel.invitationList.observe(viewLifecycleOwner) {
             adapter.setItems(it ?: emptyList())
             binding.progressBar.visibility = View.GONE

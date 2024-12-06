@@ -44,8 +44,6 @@ import javax.inject.Inject
                     result.postValue(it)
                 }
             }.await()
-            url.postValue(user.url)
-            name.postValue(user.name)
             DataStoreManager.saveInformationUser(user, context)
         }
     }

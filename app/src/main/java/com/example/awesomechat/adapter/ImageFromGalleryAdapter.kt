@@ -9,6 +9,7 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.awesomechat.R
 
 class ImageFromGalleryAdapter(private val imageClickInterface: ImageClickInterface) :
@@ -29,7 +30,9 @@ class ImageFromGalleryAdapter(private val imageClickInterface: ImageClickInterfa
         private var imageView = view.findViewById<ImageView>(R.id.image)!!
         private var cbSelect = view.findViewById<CheckBox>(R.id.rdb_select)!!
         fun bindData(uri: String) {
-            imageView.setImageURI(uri.toUri())
+            Glide.with(imageView)
+                .load(uri)
+                .into(imageView)
             imageView.setOnClickListener {
                 cbSelect.isChecked = !cbSelect.isChecked
                 imageClickInterface.selectImage(bindingAdapterPosition, uri)

@@ -71,7 +71,7 @@
     <string name="yesterday">Yesterday</string>
     <string name="image">Image</string>
     <string name="notifi">Notification</string>
-    <string name="add">Add friend</string>
+    <string name="add">Add </string>
     <string name="request_gallery">Request permission gallery</string>
     <string name="notify_success">Sign up to receive notifications successfully</string>
     <string name="notify_failed">Registration failed</string>

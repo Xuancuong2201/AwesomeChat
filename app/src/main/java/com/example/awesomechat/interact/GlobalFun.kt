@@ -3,7 +3,9 @@ package com.example.awesomechat.interact
 
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -127,6 +129,15 @@ fun showDateDetails(view: TextView, date: Date?) {
         val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
         view.text = simpleDateFormat.format(date)
     }
+}
+@BindingAdapter("isValidInput")
+fun setButtonState(view: LinearLayout, isValid: Boolean) {
+    val color = if (isValid) {
+        ContextCompat.getColor(view.context, R.color.primary_color)
+    } else {
+        ContextCompat.getColor(view.context, R.color.no_focus)
+    }
+    view.setBackgroundColor(color)
 }
 
 @BindingAdapter("checkMess")

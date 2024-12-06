@@ -7,6 +7,7 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class ChatApplication : Application(){
 
+
     override fun onCreate() {
         super.onCreate()
     }

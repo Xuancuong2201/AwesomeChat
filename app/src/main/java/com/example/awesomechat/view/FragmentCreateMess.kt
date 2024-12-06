@@ -1,12 +1,8 @@
 package com.example.awesomechat.view
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.awesomechat.R
 import com.example.awesomechat.adapter.RecipientMessageAdapter
@@ -20,16 +16,12 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FragmentCreateMess : FragmentBase<FragmentCreateMessBinding>() {
     private lateinit var adapterRecipient: RecipientMessageAdapter
-    private lateinit var controller: NavController
     private val viewModelFriend: FriendViewModel by viewModels()
     private val viewModelCreateMess: CreateMessViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        controller = findNavController()
+    override fun getFragmentView(): Int = R.layout.fragment_create_mess
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         adapterRecipient =
             RecipientMessageAdapter(object : RecipientMessageAdapter.ItemClickListener {
                 override fun onItemClick(position: Int, item: User) {
@@ -38,12 +30,6 @@ class FragmentCreateMess : FragmentBase<FragmentCreateMessBinding>() {
                     adapterRecipient.submitList(viewModelFriend.friendList.value)
                 }
             })
-        return binding.root
-    }
-
-    override fun getFragmentView(): Int = R.layout.fragment_create_mess
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         viewModelFriend.friendList.observe(viewLifecycleOwner) { it ->
             adapterRecipient.setItems(it)
             binding.rcvCreateMessage.let { rcv ->
@@ -72,7 +58,7 @@ class FragmentCreateMess : FragmentBase<FragmentCreateMessBinding>() {
                     message
                 )
             hideFrameAndReset()
-            controller.navigate(action)
+            controllerRoot.navigate(action)
 
         }
 
@@ -82,7 +68,7 @@ class FragmentCreateMess : FragmentBase<FragmentCreateMessBinding>() {
 
         binding.btnBack.setOnClickListener {
             hideFrameAndReset()
-            controller.popBackStack()
+            controllerRoot.popBackStack()
         }
 
         binding.searchFriend.setOnQueryTextListener(object :

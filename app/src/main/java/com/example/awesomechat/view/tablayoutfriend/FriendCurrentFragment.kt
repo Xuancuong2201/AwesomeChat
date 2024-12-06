@@ -1,9 +1,7 @@
 package com.example.awesomechat.view.tablayoutfriend
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,21 +24,13 @@ class FriendCurrentFragment : FragmentBase<FragmentFriendCurrenctBinding>() {
     private val viewModel: FriendViewModel by viewModels<FriendViewModel>()
     private val searchViewModel: SearchViewModel by activityViewModels<SearchViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        adapter = FriendAdapter(interactFriend)
-        return binding.root
-    }
-
     override fun getFragmentView(): Int {
         return R.layout.fragment_friend_currenct
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        adapter = FriendAdapter(interactFriend)
         viewModel.friendList.observe(viewLifecycleOwner) {
             adapter.setItems(it?.let { InteractData.convertToList(it) } ?: emptyList())
             binding.progressBar.visibility = View.GONE

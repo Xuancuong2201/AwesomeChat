@@ -130,6 +130,7 @@
             android:layout_marginTop="@dimen/margin_47dp"
             android:layout_marginEnd="@dimen/margin_25dp"
             android:layout_marginBottom="180dp"
+            app:isValidInput="@{viewmodel.result}"
             android:background="@drawable/background_chat_recipient"
             android:gravity="center"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"

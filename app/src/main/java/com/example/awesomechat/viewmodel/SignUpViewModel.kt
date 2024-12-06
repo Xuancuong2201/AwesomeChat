@@ -1,6 +1,8 @@
 package com.example.awesomechat.viewmodel
 
 import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,9 +25,13 @@ class SignUpViewModel @Inject constructor(
     val account by lazy { MutableLiveData<String>() }
     val email by lazy { MutableLiveData<String>() }
     val password by lazy { MutableLiveData<String>() }
-    val isChecked: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
-    val stateRegister: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val result = MutableLiveData(false)
+    val isChecked by lazy { MutableLiveData(false) }
+    val stateRegister by lazy { MutableLiveData<Boolean>() }
+    val result: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {
+        listOf(email, password, account, isChecked).forEach { source ->
+            addSource(source) { value = checkEnable() }
+        }
+    }
     fun register() {
         interact.registerAccount(
             account.value.toString(),
@@ -49,9 +55,8 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    fun checkEnable() {
-        result.value =
-            !(account.value.isNullOrEmpty() || email.value.isNullOrEmpty() || password.value.isNullOrEmpty() || isChecked.value == false)
+    private fun checkEnable(): Boolean {
+        return !(account.value.isNullOrEmpty() || email.value.isNullOrEmpty() || password.value.isNullOrEmpty() || isChecked.value == false)
     }
 
 }

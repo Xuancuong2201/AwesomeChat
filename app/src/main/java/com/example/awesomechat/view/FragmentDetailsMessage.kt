@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,7 +35,6 @@ class FragmentDetailsMessage : FragmentBase<FragmentDetailsMessageBinding>(),
     ImageFromGalleryAdapter.ImageClickInterface {
     private lateinit var detailsMessageAdapter: DetailsMessageAdapter
     private lateinit var imageFromGalleryAdapter: ImageFromGalleryAdapter
-    private lateinit var controller: NavController
     private lateinit var message: Messages
     private lateinit var listImage: List<String>
     private val argsNav: FragmentDetailsMessageArgs by navArgs()
@@ -57,12 +53,10 @@ class FragmentDetailsMessage : FragmentBase<FragmentDetailsMessageBinding>(),
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        detailsMessageAdapter = DetailsMessageAdapter(message.url.toString()    )
+    ): View? {
+        detailsMessageAdapter = DetailsMessageAdapter(message.url.toString())
         imageFromGalleryAdapter = ImageFromGalleryAdapter(this)
-        binding.viewmodel = viewModel
-        return binding.root
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun getFragmentView(): Int {
@@ -71,11 +65,10 @@ class FragmentDetailsMessage : FragmentBase<FragmentDetailsMessageBinding>(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        controller = findNavController()
+        setViewModelForBinding(viewModel)
         viewModel.imageUrl.value = message.url
         viewModel.name.value = message.name
         viewModel.email.value = message.email
-
 
         viewModel.content.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
@@ -114,7 +107,7 @@ class FragmentDetailsMessage : FragmentBase<FragmentDetailsMessageBinding>(),
         }
 
         binding.btnBack.setOnClickListener {
-            controller.popBackStack()
+            controllerRoot.popBackStack()
             viewModel.listDetailsMessage.postValue(emptyList())
             this.onDestroy()
 
@@ -188,8 +181,8 @@ class FragmentDetailsMessage : FragmentBase<FragmentDetailsMessageBinding>(),
             if (isGranted) {
                 CoroutineScope(Dispatchers.IO).launch {
                     val newList = viewModel.getListImageFromGallery()
-                    withContext(Dispatchers.Main){
-                            imageFromGalleryAdapter.submitList(newList)
+                    withContext(Dispatchers.Main) {
+                        imageFromGalleryAdapter.submitList(newList)
                     }
                 }
             }
